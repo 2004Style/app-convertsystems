@@ -1,73 +1,279 @@
-# Minimal Template
+# ConvertSystems App
 
-This is a [React Native](https://reactnative.dev/) project built with [Expo](https://expo.dev/) and [React Native Reusables](https://reactnativereusables.com).
+Una aplicación móvil integral desarrollada con [React Native](https://reactnative.dev/), [Expo](https://expo.dev/) y [React Native Reusables](https://reactnativereusables.com) para soluciones digitales empresariales.
 
-It was initialized using the following command:
+## 📱 Características de la Aplicación
 
-```bash
-npx react-native-reusables/cli@latest init -t app-convertsystems
-```
+- 🔐 **Sistema de Autenticación**: Registro e inicio de sesión completos
+- 👤 **Gestión de Perfil**: Administración de información personal
+- 🛒 **Compras y Favoritos**: Sistema completo de compras y wishlist
+- 🔔 **Notificaciones**: Centro de notificaciones en tiempo real
+- ⚙️ **Configuraciones**: Personalización completa de la aplicación
+- 📱 **Responsive Design**: Optimizado para móvil con safe areas
+- 🌙 **Modo Oscuro**: Soporte completo para tema claro/oscuro
 
-## Getting Started
+## 🚀 Inicio Rápido
 
-To run the development server:
-
-```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    # or
-    bun dev
-```
-
-This will start the Expo Dev Server. Open the app in:
-
-- **iOS**: press `i` to launch in the iOS simulator _(Mac only)_
-- **Android**: press `a` to launch in the Android emulator
-- **Web**: press `w` to run in a browser
-
-You can also scan the QR code using the [Expo Go](https://expo.dev/go) app on your device. This project fully supports running in Expo Go for quick testing on physical devices.
-
-## Adding components
-
-You can add more reusable components using the CLI:
+### 1. Instalación
 
 ```bash
-npx react-native-reusables/cli@latest add [...components]
+# Clonar el repositorio
+git clone https://github.com/2004Style/app-convertsystems.git
+cd app-convertsystems
+
+# Instalar dependencias
+pnpm install
+# o
+npm install
 ```
 
-> e.g. `npx react-native-reusables/cli@latest add input textarea`
+### 2. Ejecutar la aplicación
 
-If you don't specify any component names, you'll be prompted to select which components to add interactively. Use the `--all` flag to install all available components at once.
+```bash
+# Desarrollo web
+pnpm run web
 
-## Project Features
+# Desarrollo móvil (requiere Expo Go)
+pnpm run dev
 
-- ⚛️ Built with [Expo Router](https://expo.dev/router)
-- 🎨 Styled with [Tailwind CSS](https://tailwindcss.com/) via [Nativewind](https://www.nativewind.dev/)
-- 📦 UI powered by [React Native Reusables](https://github.com/founded-labs/react-native-reusables)
-- 🚀 New Architecture enabled
-- 🔥 Edge to Edge enabled
-- 📱 Runs on iOS, Android, and Web
+# Comandos específicos
+pnpm run ios     # iOS (Solo Mac)
+pnpm run android # Android
+```
 
-## Learn More
+### 3. Abrir la aplicación
 
-To dive deeper into the technologies used:
+- **Web**: Abre automáticamente en `http://localhost:8081`
+- **Móvil**: Escanea el código QR con [Expo Go](https://expo.dev/go)
+- **Simuladores**: Presiona `i` (iOS) o `a` (Android) en la terminal
 
-- [React Native Docs](https://reactnative.dev/docs/getting-started)
-- [Expo Docs](https://docs.expo.dev/)
-- [Nativewind Docs](https://www.nativewind.dev/)
-- [React Native Reusables](https://reactnativereusables.com)
+## 📂 Estructura del Proyecto
 
-## Deploy with EAS
+```
+app-convertsystems/
+├── app/                          # Páginas de la aplicación (Expo Router)
+│   ├── _layout.tsx              # Layout raíz con SafeAreaProvider
+│   ├── index.tsx                # Página principal/bienvenida
+│   ├── sign-in-form.tsx         # Formulario de inicio de sesión
+│   ├── sing-up-form.tsx         # Formulario de registro
+│   ├── profile.tsx              # Perfil del usuario
+│   ├── purchases.tsx            # Historial de compras
+│   ├── favorites.tsx            # Productos favoritos
+│   ├── notifications.tsx        # Centro de notificaciones
+│   └── settings.tsx             # Configuraciones
+├── components/
+│   ├── navigation/              # Sistema de navegación
+│   │   ├── app-layout.tsx       # Layout principal con safe areas
+│   │   ├── header.tsx           # Barra de navegación superior
+│   │   └── side-menu.tsx        # Menú lateral
+│   ├── ui/                      # Componentes UI reutilizables
+│   └── *.tsx                    # Componentes específicos (forms, etc.)
+├── lib/
+│   ├── theme.ts                 # Configuración de temas
+│   └── utils.ts                 # Utilidades y helpers
+├── hooks/                       # Hooks personalizados
+│   └── register.hook.ts         # Hook para registro de usuarios
+└── routes/                      # Configuración de rutas backend
+    ├── auth.routes.ts
+    ├── products.routes.ts
+    └── profile.routes.ts
+```
 
-The easiest way to deploy your app is with [Expo Application Services (EAS)](https://expo.dev/eas).
+## 🔧 Cómo Agregar una Nueva Página
 
-- [EAS Build](https://docs.expo.dev/build/introduction/)
-- [EAS Updates](https://docs.expo.dev/eas-update/introduction/)
-- [EAS Submit](https://docs.expo.dev/submit/introduction/)
+### Paso 1: Crear el archivo de la página
+
+Crea un nuevo archivo en la carpeta `app/` siguiendo la convención de Expo Router:
+
+```bash
+# Ejemplo: Crear página de productos
+touch app/products.tsx
+```
+
+### Paso 2: Estructura básica de la página
+
+```tsx
+// app/products.tsx
+import { AppLayout } from '@/components/navigation/app-layout';
+import { Text } from '@/components/ui/text';
+import { Stack } from 'expo-router';
+import { ScrollView } from 'react-native';
+
+export default function ProductsScreen() {
+  return (
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <AppLayout title="Productos">
+        <ScrollView
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+          showsVerticalScrollIndicator={false}>
+          <Text>Contenido de productos aquí</Text>
+        </ScrollView>
+      </AppLayout>
+    </>
+  );
+}
+```
+
+### Paso 3: Agregar al menú lateral
+
+Edita `components/navigation/side-menu.tsx` para incluir la nueva página:
+
+```tsx
+// Importar el icono necesario
+import { Package } from 'lucide-react-native';
+
+// Agregar el MenuItem en la sección correspondiente
+<MenuItem icon={Package} title="Productos" onPress={() => navigateAndClose('/products')} />;
+```
+
+### Paso 4: (Opcional) Configurar rutas backend
+
+Si la página necesita conectarse al backend, crea/edita el archivo de rutas correspondiente:
+
+```typescript
+// routes/products.routes.ts
+const PRODUCTS_ROUTES = {
+  GET_ALL: `${URL_API}/products`,
+  GET_BY_ID: (id: string) => `${URL_API}/products/${id}`,
+  CREATE: `${URL_API}/products`,
+  // ...más rutas
+};
+
+export default PRODUCTS_ROUTES;
+```
+
+## 🎨 Personalización de UI
+
+### Componentes disponibles
+
+```bash
+# Ver componentes disponibles
+npx react-native-reusables/cli@latest add
+
+# Agregar componentes específicos
+npx react-native-reusables/cli@latest add dialog sheet tabs
+```
+
+### Temas y colores
+
+Edita `lib/theme.ts` para personalizar:
+
+- Colores del tema claro/oscuro
+- Esquemas de navegación
+- Variables de diseño
+
+### Safe Areas y Layout
+
+El `AppLayout` maneja automáticamente:
+
+- Safe areas (notch, dynamic island, barras de sistema)
+- Altura dinámica de ventana (equivalente a `100dvh`)
+- Orientación automática
+- Menú lateral contextual
+
+## 🔌 Integración Backend
+
+### Variables de entorno
+
+Configura las URLs en tu archivo `.env`:
+
+```env
+EXPO_PUBLIC_URL_BACKEND=https://tu-backend.com
+EXPO_PUBLIC_URL_API=https://tu-backend.com/api
+EXPO_PUBLIC_URL_BOT=https://tu-bot.com
+```
+
+### Hooks personalizados
+
+Los hooks en `hooks/` manejan la lógica de negocio:
+
+- `register.hook.ts`: Registro de usuarios
+- Agrega más hooks según necesites
+
+## 📱 Optimizaciones Móviles
+
+### KeyboardAvoidingView
+
+Los formularios usan `KeyboardAvoidingView` automáticamente:
+
+```tsx
+<KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+>
+```
+
+### ScrollView optimizado
+
+Usa este patrón para listas scrolleables:
+
+```tsx
+<ScrollView
+    className="flex-1"
+    contentContainerStyle={{ flexGrow: 1, padding: 16 }}
+    showsVerticalScrollIndicator={false}
+>
+```
+
+## 🚀 Deployment
+
+### EAS Build (Recomendado)
+
+```bash
+# Instalar EAS CLI
+npm install -g eas-cli
+
+# Configurar proyecto
+eas build:configure
+
+# Build para desarrollo
+eas build --platform all --profile development
+
+# Build para producción
+eas build --platform all --profile production
+```
+
+### Web Deployment
+
+```bash
+# Build para web
+npx expo export -p web
+
+# Los archivos estáticos estarán en /dist
+```
+
+## 🛠️ Scripts Disponibles
+
+| Comando            | Descripción            |
+| ------------------ | ---------------------- |
+| `pnpm run dev`     | Servidor de desarrollo |
+| `pnpm run web`     | Desarrollo web         |
+| `pnpm run ios`     | iOS simulator (Mac)    |
+| `pnpm run android` | Android emulator       |
+| `pnpm run build`   | Build para producción  |
+| `pnpm run lint`    | Linting del código     |
+
+## 📚 Recursos Útiles
+
+- [Expo Router Docs](https://expo.dev/router) - Sistema de navegación
+- [NativeWind Docs](https://www.nativewind.dev/) - Styling con Tailwind
+- [React Native Reusables](https://reactnativereusables.com) - Componentes UI
+- [Lucide React Native](https://lucide.dev/) - Iconos
+
+## 🤝 Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-caracteristica`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
+4. Push a la rama (`git push origin feature/nueva-caracteristica`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
 
 ---
 
-If you enjoy using React Native Reusables, please consider giving it a ⭐ on [GitHub](https://github.com/founded-labs/react-native-reusables). Your support means a lot!
+⭐ Si te gusta este proyecto, ¡dale una estrella en [GitHub](https://github.com/2004Style/app-convertsystems)!
