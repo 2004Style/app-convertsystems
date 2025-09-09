@@ -14,6 +14,7 @@ import * as React from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Image, Platform, Pressable, TextInput, View } from 'react-native';
 import { Controller } from 'react-hook-form';
+import { Link } from 'expo-router';
 
 export function SignUpForm() {
   const passwordInputRef = React.useRef<TextInput>(null);
@@ -257,6 +258,10 @@ export function SignUpForm() {
             <Button className="w-full" onPress={handleSubmit}>
               <Text>Continue</Text>
             </Button>
+            <Text className="text-center text-sm">
+                        Ya tienes una cuenta?{' '}
+                          <Link href="/sign-in-form" className="text-sm text-white underline underline-offset-4">log-in</Link>
+                      </Text>
           </View>
         </CardContent>
       </Card>

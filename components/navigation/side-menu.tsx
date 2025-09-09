@@ -11,7 +11,10 @@ import {
     ShoppingBag,
     Bell,
     LogOut,
-    X
+    X,
+    Flame,
+    CreditCard,
+    Gift
 } from 'lucide-react-native';
 import * as React from 'react';
 import { Modal, Pressable, View, ScrollView } from 'react-native';
@@ -115,6 +118,31 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
 
                         <Separator className="my-2" />
 
+                        {/* Sección Productos */}
+                        <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
+                            PRODUCTOS
+                        </Text>
+
+                        <MenuItem
+                            icon={Flame}
+                            title="Ofertas Especiales"
+                            onPress={() => navigateAndClose('/ofertas')}
+                        />
+
+                        <MenuItem
+                            icon={CreditCard}
+                            title="Productos Premium"
+                            onPress={() => navigateAndClose('/pago')}
+                        />
+
+                        <MenuItem
+                            icon={Gift}
+                            title="Productos Gratuitos"
+                            onPress={() => navigateAndClose('/gratis')}
+                        />
+
+                        <Separator className="my-2" />
+
                         {/* Sección Compras */}
                         <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
                             COMPRAS
@@ -154,11 +182,17 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                         <Separator className="my-4" />
 
                         {/* Logout */}
-                        <MenuItem
+                        {/* <MenuItem
                             icon={LogOut}
                             title="Cerrar Sesión"
                             onPress={handleLogout}
                             variant="destructive"
+                        /> */}
+                        <MenuItem
+                            icon={LogOut}
+                            title="Log In"
+                            onPress={() => navigateAndClose('/sign-in-form')}
+                            variant="default"
                         />
                     </ScrollView>
                 </View>

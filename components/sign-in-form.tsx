@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { Link } from 'expo-router';
 import * as React from 'react';
 import { Pressable, type TextInput, View } from 'react-native';
 
@@ -80,14 +81,9 @@ export function SignInForm() {
             <Separator className="flex-1" />
           </View>
           <SocialConnections />
-          <Text className="text-center text-sm">
+          <Text className="text-center items-center justify-center text-sm">
             No tienes una cuenta aún?{' '}
-            <Pressable
-              onPress={() => {
-                // TODO: Navigate to sign up screen
-              }}>
-              <Text className="text-sm underline underline-offset-4">Registrar</Text>
-            </Pressable>
+              <Link href="/sing-up-form" className="text-sm text-white underline underline-offset-4">Registrar</Link>
           </Text>
         </CardContent>
       </Card>
