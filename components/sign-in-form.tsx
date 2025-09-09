@@ -83,7 +83,7 @@ export function SignInForm() {
           <SocialConnections />
           <Text className="text-center items-center justify-center text-sm">
             No tienes una cuenta aún?{' '}
-              <Link href="/sing-up-form" className="text-sm text-white underline underline-offset-4">Registrar</Link>
+              <Link href="/sing-up-form" className="text-sm underline underline-offset-4">Registrar</Link>
           </Text>
         </CardContent>
       </Card>
