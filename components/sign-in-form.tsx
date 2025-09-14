@@ -11,19 +11,56 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
-import { Link } from 'expo-router';
+import { useAuthActions } from '@/hooks/useAuthActions';
+import { Link, router } from 'expo-router';
 import * as React from 'react';
+import { Alert } from 'react-native';
 import { Pressable, type TextInput, View } from 'react-native';
 
+
 export function SignInForm() {
+  const { login, loading, isAuthenticated } = useAuthActions();
   const passwordInputRef = React.useRef<TextInput>(null);
+
+  // Estados para los inputs
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
+  const handleLogin = async () => {
+    try {
+      const result = await login({
+        username: username,
+        password: password,
+      });
+
+      if (result.alert === 'success') {
+        Alert.alert('Éxito', 'Login exitoso');
+      } else {
+        Alert.alert('Error', result.message || 'Error en el login');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Error de conexión');
+    }
+  };
+
+  // if (isAuthenticated) {
+  //   return (
+  //     <View style={{ padding: 20 }}>
+  //       <Text>Usuario ya autenticado ✅</Text>
+  //     </View>
+  //   );
+  // }
+  if (isAuthenticated) {
+    return router.replace('/');
+    
+  }
+
   function onSubmit() {
-    // TODO: Submit form and navigate to protected screen if successful
+    handleLogin();
   }
 
   return (
@@ -38,16 +75,16 @@ export function SignInForm() {
         <CardContent className="gap-6">
           <View className="gap-6">
             <View className="gap-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="username">email o usuario</Label>
               <Input
-                id="email"
+                id="username"
                 placeholder="m@example.com"
-                keyboardType="email-address"
-                autoComplete="email"
                 autoCapitalize="none"
                 onSubmitEditing={onEmailSubmitEditing}
                 returnKeyType="next"
                 submitBehavior="submit"
+                value={username}
+                onChangeText={setUsername}
               />
             </View>
             <View className="gap-1.5">
@@ -69,10 +106,12 @@ export function SignInForm() {
                 secureTextEntry
                 returnKeyType="send"
                 onSubmitEditing={onSubmit}
+                value={password}
+                onChangeText={setPassword}
               />
             </View>
-            <Button className="w-full" onPress={onSubmit}>
-              <Text>Login</Text>
+            <Button className="w-full" onPress={onSubmit} disabled={loading}>
+              <Text>{loading ? 'Iniciando sesión...' : 'Login'}</Text>
             </Button>
           </View>
           <View className="flex-row items-center">
@@ -83,7 +122,7 @@ export function SignInForm() {
           <SocialConnections />
           <Text className="text-center items-center justify-center text-sm">
             No tienes una cuenta aún?{' '}
-              <Link href="/sing-up-form" className="text-sm underline underline-offset-4">Registrar</Link>
+            <Link href="/sing-up-form" className="text-sm underline underline-offset-4">Registrar</Link>
           </Text>
         </CardContent>
       </Card>

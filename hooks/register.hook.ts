@@ -2,11 +2,10 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegistroB_Public } from '@/routes/public.routes';
-import { RegistroConfirmarB_Client } from '@/routes/user.routes';
-import { PbLogin, PbRegisterConfirm } from '@/routes/Frontend.routes';
 import { Alert, Platform } from 'react-native';
 import { router } from 'expo-router';
+import { useAuthActions } from './useAuthActions';
+import { useCosultaApi } from './datosApi.hook';
 
 const FormSchema = z.object({
   code: z.string().min(6, {
@@ -15,6 +14,8 @@ const FormSchema = z.object({
 });
 
 export function useConfirmRegisterForm() {
+  const { request } = useCosultaApi();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -23,35 +24,23 @@ export function useConfirmRegisterForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    //console.log("Datos enviados:", data);
-
     try {
-      const response: any = await fetch(RegistroConfirmarB_Client, {
-        method: `POST`,
-        headers: {
-          // Authorization: `Bearer ${accessToken}`,
-          // Refresh: `${refreshToken}`,
-          'Content-Type': 'application/json',
-          'X-Forwarded-Proto': 'https',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
+      const response = await request('POST', '/auth/register/confirm', {}, data);
 
-      const res = await response.json();
+      if (response.alert === 'success') {
+        Alert.alert('Registro confirmado', 'Tu cuenta ha sido verificada exitosamente.');
 
-      if (!response.ok) {
-        return Alert.alert('error al confirmar el registro', res.message);
-      }
-
-      // Navegación compatible con React Native y Web
-      if (Platform.OS === 'web') {
-        window.location.href = PbLogin;
+        // Navegación compatible con React Native y Web
+        if (Platform.OS === 'web') {
+          window.location.href = '/sign-in-form';
+        } else {
+          router.push('/sign-in-form');
+        }
       } else {
-        router.push('/sign-in-form');
+        Alert.alert('Error al confirmar el registro', response.message || 'Error desconocido');
       }
     } catch (error: any) {
-      return Alert.alert('error al confirmar el registro', error.toString());
+      Alert.alert('Error al confirmar el registro', error.toString());
     }
   };
 
@@ -81,6 +70,8 @@ const SchemaRegister = z
   });
 
 export function useRegisterForm() {
+  const { register } = useAuthActions();
+
   const form = useForm<z.infer<typeof SchemaRegister>>({
     resolver: zodResolver(SchemaRegister),
     shouldUnregister: false,
@@ -100,57 +91,38 @@ export function useRegisterForm() {
     console.log('Datos enviados:', data);
 
     try {
-      // Crear el objeto de datos para enviar
-      const submitData: any = {
+      // Preparar los datos para el registro
+      const registerData = {
         nombre: data.nombre,
         apellidos: data.apellidos,
         correo: data.correo,
         telefono: data.telefono,
         direccion: data.direccion,
-        fecha_nacimiento: data.fecha_nacimiento.toISOString(),
+        fecha_nacimiento: data.fecha_nacimiento,
         contrasena: data.contrasena,
       };
 
-      let response: any;
+      const result = await register(registerData);
 
-      if (Platform.OS === 'web') {
-        // En web, usar FormData
-        const formData = new FormData();
-        Object.keys(submitData).forEach((key) => {
-          formData.append(key, submitData[key]);
-        });
-
-        response = await fetch(RegistroB_Public, {
-          method: 'POST',
-          body: formData,
-          credentials: 'include',
-        });
-      } else {
-        // En React Native, usar JSON
-        response = await fetch(RegistroB_Public, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+      if (result.alert === 'success') {
+        Alert.alert('Registro exitoso', 'Por favor revisa tu correo para confirmar tu cuenta.', [
+          {
+            text: 'OK',
+            onPress: () => {
+              // Navegación compatible con React Native y Web
+              if (Platform.OS === 'web') {
+                window.location.href = '/sign-in-form';
+              } else {
+                router.push('/sign-in-form');
+              }
+            },
           },
-          body: JSON.stringify(submitData),
-        });
-      }
-
-      const res = await response.json();
-
-      if (!response.ok) {
-        return Alert.alert('error al enviar los datos', res.message);
-      }
-
-      // Navegación compatible con React Native y Web
-      if (Platform.OS === 'web') {
-        window.location.href = PbRegisterConfirm;
+        ]);
       } else {
-        Alert.alert('Registro exitoso', 'Por favor revisa tu correo para confirmar tu cuenta.');
-        router.push('/sign-in-form');
+        Alert.alert('Error al registrar', result.message || 'Error desconocido');
       }
     } catch (error: any) {
-      return Alert.alert('error al enviar los datos', error.toString());
+      Alert.alert('Error al registrar', error.toString());
     }
   };
 
