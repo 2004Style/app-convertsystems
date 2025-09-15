@@ -7,16 +7,6 @@ interface LoginCredentials {
   password: string;
 }
 
-interface RegisterData {
-  nombre: string;
-  apellidos: string;
-  correo: string;
-  contrasena: string;
-  telefono?: string;
-  direccion?: string;
-  fecha_nacimiento?: Date;
-}
-
 interface ApiResponse {
   alert: string;
   data?: any;
@@ -97,31 +87,6 @@ export const useAuthActions = () => {
     }
   };
 
-  const register = async (userData: RegisterData): Promise<ApiResponse> => {
-    try {
-      setLoading(true);
-
-      const response = await apiClient.post('/auth/register', userData);
-
-      if (response.data) {
-        return {
-          alert: 'success',
-          data: response.data,
-          message: 'Registro exitoso',
-        };
-      } else {
-        return {
-          alert: 'error',
-          message: 'Error en el registro',
-        };
-      }
-    } catch (error: any) {
-      return handleApiError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const refreshToken = async (): Promise<ApiResponse> => {
     try {
       if (!session?.backendTokens?.refreshToken) {
@@ -160,7 +125,6 @@ export const useAuthActions = () => {
 
   return {
     login,
-    register,
     logout,
     refreshToken,
     loading,

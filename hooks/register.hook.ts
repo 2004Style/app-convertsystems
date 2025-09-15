@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { useAuthActions } from './useAuthActions';
-import { useCosultaApi } from './datosApi.hook';
+import axios from 'axios';
+import { useState } from 'react';
 
 const FormSchema = z.object({
   code: z.string().min(6, {
@@ -14,8 +14,6 @@ const FormSchema = z.object({
 });
 
 export function useConfirmRegisterForm() {
-  const { request } = useCosultaApi();
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -25,9 +23,18 @@ export function useConfirmRegisterForm() {
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const response = await request('POST', '/auth/register/confirm', {}, data);
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Forwarded-Proto': 'https',
+        },
+        body: JSON.stringify(data),
+      });
 
-      if (response.alert === 'success') {
+      const res = await response.json();
+
+      if (response.ok) {
         Alert.alert('Registro confirmado', 'Tu cuenta ha sido verificada exitosamente.');
 
         // Navegación compatible con React Native y Web
@@ -37,7 +44,7 @@ export function useConfirmRegisterForm() {
           router.push('/sign-in-form');
         }
       } else {
-        Alert.alert('Error al confirmar el registro', response.message || 'Error desconocido');
+        Alert.alert('Error al confirmar el registro', res.message || 'Error desconocido');
       }
     } catch (error: any) {
       Alert.alert('Error al confirmar el registro', error.toString());
@@ -63,6 +70,8 @@ const SchemaRegister = z
     fecha_nacimiento: z.date({ message: 'La fecha de nacimiento no es válida.' }),
     contrasena: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
     cContrasena: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+    // En React Native usamos string (URI) - OBLIGATORIO según el servidor
+    perfil: z.string().min(1, { message: 'La imagen de perfil es obligatoria.' }),
   })
   .refine((data: any) => data.contrasena === data.cContrasena, {
     message: 'Las contraseñas no coinciden',
@@ -70,7 +79,7 @@ const SchemaRegister = z
   });
 
 export function useRegisterForm() {
-  const { register } = useAuthActions();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof SchemaRegister>>({
     resolver: zodResolver(SchemaRegister),
@@ -84,27 +93,111 @@ export function useRegisterForm() {
       fecha_nacimiento: new Date(),
       contrasena: '',
       cContrasena: '',
+      perfil: '', // Obligatorio - debe tener valor para que funcione el servidor
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof SchemaRegister>) => {
-    console.log('Datos enviados:', data);
+  const onSubmit = async (data: z.infer<typeof SchemaRegister>, imageUri?: string) => {
+    console.log('=== INICIO onSubmit ===');
+    console.log('=== REGISTRO DEBUG ===');
+    console.log('Datos del formulario:', data);
+    console.log('Tipo de fecha_nacimiento:', typeof data.fecha_nacimiento, data.fecha_nacimiento);
+
+    // Verificar que todos los campos requeridos estén presentes
+    if (!data.perfil || data.perfil.trim() === '') {
+      console.error('ERROR: Campo perfil vacío');
+      Alert.alert('Error', 'Debe seleccionar una imagen de perfil');
+      return;
+    }
 
     try {
-      // Preparar los datos para el registro
-      const registerData = {
-        nombre: data.nombre,
-        apellidos: data.apellidos,
-        correo: data.correo,
-        telefono: data.telefono,
-        direccion: data.direccion,
-        fecha_nacimiento: data.fecha_nacimiento,
-        contrasena: data.contrasena,
-      };
+      setLoading(true);
+      // Crear FormData igual que en la web
+      const formData = new FormData();
 
-      const result = await register(registerData);
+      formData.append('nombre', data.nombre);
+      formData.append('apellidos', data.apellidos);
+      formData.append('correo', data.correo);
+      formData.append('telefono', data.telefono);
+      formData.append('direccion', data.direccion);
+      // Fecha en formato que puede parsear new Date() en el servidor
+      const fechaFormateada = data.fecha_nacimiento.toISOString().split('T')[0]; // YYYY-MM-DD
+      formData.append('fecha_nacimiento', fechaFormateada);
+      formData.append('contrasena', data.contrasena);
 
-      if (result.alert === 'success') {
+      // Imagen OBLIGATORIA - el servidor siempre espera un archivo 'perfil'
+      if (data.perfil) {
+        console.log('Procesando imagen. Platform:', Platform.OS);
+        console.log('URI de imagen:', data.perfil);
+
+        const filename = data.perfil.split('/').pop() || 'profile.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+        // En web, necesitamos crear un objeto File similar al nativo
+        if (Platform.OS === 'web') {
+          // Para web, crear un Blob/File desde la URI
+          try {
+            console.log('Creando archivo web...');
+            const response = await fetch(data.perfil);
+            const blob = await response.blob();
+            const file = new File([blob], filename, { type });
+            formData.append('perfil', file);
+            console.log('Archivo web configurado:', { name: filename, type, size: blob.size });
+          } catch (error) {
+            console.error('Error creando archivo web:', error);
+            Alert.alert('Error', 'No se pudo procesar la imagen');
+            return;
+          }
+        } else {
+          // Para React Native nativo
+          formData.append('perfil', {
+            uri: data.perfil,
+            name: filename,
+            type: type,
+          } as any);
+          console.log('Archivo RN configurado:', { uri: data.perfil, name: filename, type: type });
+        }
+      } else {
+        console.error('ERROR: No hay imagen seleccionada pero es obligatoria');
+        Alert.alert('Error', 'La imagen de perfil es obligatoria para el registro');
+        return;
+      }
+
+      console.log('FormData preparado. Campos incluidos:');
+      console.log('  nombre:', data.nombre);
+      console.log('  apellidos:', data.apellidos);
+      console.log('  correo:', data.correo);
+      console.log('  telefono:', data.telefono);
+      console.log('  direccion:', data.direccion);
+      console.log('  fecha_nacimiento:', fechaFormateada, '(formato YYYY-MM-DD)');
+      console.log('  contrasena:', '[OCULTA]');
+      console.log('  perfil: [ARCHIVO]', data.perfil ? 'SÍ' : 'NO');
+
+      console.log('=== ENVIANDO REQUEST ===');
+      console.log('URL:', `${process.env.EXPO_PUBLIC_API_URL}/auth/register`);
+      console.log('Método: POST');
+      console.log('FormData configurado completamente');
+
+      // Usar fetch directo igual que en la web (SIN headers Content-Type)
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          // No Content-Type para que el navegador establezca el boundary automáticamente
+          Accept: 'application/json',
+        },
+        body: formData,
+        // No incluir credentials en React Native
+      });
+
+      const res = await response.json();
+
+      console.log('=== RESPUESTA DEL SERVIDOR ===');
+      console.log('Status:', response.status);
+      console.log('Headers:', Object.fromEntries(response.headers));
+      console.log('Response body:', res);
+
+      if (response.ok) {
         Alert.alert('Registro exitoso', 'Por favor revisa tu correo para confirmar tu cuenta.', [
           {
             text: 'OK',
@@ -119,12 +212,21 @@ export function useRegisterForm() {
           },
         ]);
       } else {
-        Alert.alert('Error al registrar', result.message || 'Error desconocido');
+        console.error('=== ERROR DEL SERVIDOR ===');
+        console.error('Status:', response.status);
+        console.error('StatusText:', response.statusText);
+        console.error('Error body:', res);
+
+        const errorMessage = res.message || res.error || `Error del servidor (${response.status})`;
+        Alert.alert('Error al registrar', errorMessage);
       }
     } catch (error: any) {
+      console.error('Error en registro:', error);
       Alert.alert('Error al registrar', error.toString());
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { form, onSubmit };
+  return { form, onSubmit, loading };
 }

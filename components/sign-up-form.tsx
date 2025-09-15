@@ -26,11 +26,11 @@ export function SignUpForm() {
   // function onSubmit() {
   //   // TODO: Submit form and navigate to protected screen if successful
   // }
-  const { form, onSubmit } = useRegisterForm();
-  const { control, handleSubmit: formHandleSubmit, setValue } = form;
+  const { form, onSubmit, loading } = useRegisterForm();
+  const { control, handleSubmit: formHandleSubmit, setValue, watch, formState: { errors } } = form;
   const [previewUrl, setPreviewUrl] = React.useState('');
 
-  const handleSubmit = formHandleSubmit(onSubmit);
+  const handleSubmit = formHandleSubmit((data) => onSubmit(data));
 
   const pickImage = async () => {
     // Solicitar permisos
@@ -52,8 +52,8 @@ export function SignUpForm() {
       const imageUri = result.assets[0].uri;
       setPreviewUrl(imageUri);
 
-      // Por ahora solo mostramos la imagen, sin enviarla al servidor
-      // TODO: Implementar subida de archivos cuando sea necesario
+      // Actualizar el campo perfil en el formulario (opcional)
+      setValue('perfil', imageUri);
     }
   };
 
@@ -87,6 +87,11 @@ export function SignUpForm() {
                   </View>
                 )}
               </Pressable>
+              {errors.perfil && (
+                <Text className="text-red-500 text-sm mt-2 text-center">
+                  {errors.perfil.message}
+                </Text>
+              )}
             </View>
             <View className="gap-1.5">
               <Label htmlFor="nombre">Nombre</Label>
@@ -255,13 +260,13 @@ export function SignUpForm() {
                 )}
               />
             </View>
-            <Button className="w-full" onPress={handleSubmit}>
-              <Text>Continue</Text>
+            <Button className="w-full" onPress={handleSubmit} disabled={loading}>
+              <Text>{loading ? 'Registrando...' : 'Continue'}</Text>
             </Button>
             <Text className="text-center text-sm">
-                        Ya tienes una cuenta?{' '}
-                          <Link href="/sign-in-form" className="text-sm underline underline-offset-4">log-in</Link>
-                      </Text>
+              Ya tienes una cuenta?{' '}
+              <Link href="/sign-in-form" className="text-sm underline underline-offset-4">log-in</Link>
+            </Text>
           </View>
         </CardContent>
       </Card>
