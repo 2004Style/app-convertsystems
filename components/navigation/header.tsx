@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
-import { router, usePathname } from 'expo-router';
+import { router } from 'expo-router';
 import { ArrowLeft, Menu, MoonIcon, SunIcon } from 'lucide-react-native';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
@@ -20,7 +20,6 @@ export function Header({
     showMenu = true,
     onMenuPress
 }: HeaderProps) {
-    const pathname = usePathname();
     const { colorScheme, toggleColorScheme } = useColorScheme();
 
 
@@ -36,7 +35,7 @@ export function Header({
         <View className="flex-row items-center justify-between p-4 bg-background border-b border-border">
             {/* Lado izquierdo */}
             <View className="flex-row items-center flex-1">
-                {(showBackButton ) && (
+                {(showBackButton) && (
                     <Button
                         size="icon"
                         variant="ghost"
@@ -67,7 +66,7 @@ export function Header({
                     />
                 </Button>
 
-                {/* Menú hamburguesa (solo en páginas no-auth) */}
+                {/* Menú hamburguesa */}
                 {showMenu && onMenuPress && (
                     <Button
                         size="icon"

@@ -8,7 +8,8 @@ import { ApartadosCard, PerfilCard } from '@/components/Cards-Home/cards';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { useEffect, useState } from 'react';
-import { CarouselPlugin, DataCarruselWelcome } from '@/components/Cards-Home/carrusel';
+import { NativeCarousel } from '@/components/Cards-Home/native-carousel';
+import { DataCarruselWelcome } from '@/components/Cards-Home/carrusel';
 import { formatearFechaParaString } from '@/utils/formatearFecha';
 import { Clock, Database, DollarSign, Download, GitBranch } from 'lucide-react-native';
 
@@ -115,16 +116,24 @@ export default function Screen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <AppLayout title="ConvertSystems">
-        <ScrollView className="flex-1 p-2">
-          <View className="items-center gap-8 p-2">
+        <ScrollView className="flex-1" contentContainerStyle={{ padding: 8 }}>
+          <View className="items-center gap-6 w-full">
             {session?.user !== null && session?.user !== undefined &&
               <PerfilCard data={session.user} />
             }
             {apartados !== null &&
               <ApartadosCard data={apartados} />
             }
-            <CarouselPlugin data={masDescargado} autoPlayDelay={4000} />
-            <CarouselPlugin data={masNuevo} autoPlayDelay={4000} />
+            {masDescargado.length > 0 && (
+              <View className="w-full">
+                <NativeCarousel data={masDescargado} autoPlayDelay={4000} />
+              </View>
+            )}
+            {masNuevo.length > 0 && (
+              <View className="w-full">
+                <NativeCarousel data={masNuevo} autoPlayDelay={4000} />
+              </View>
+            )}
           </View>
         </ScrollView>
       </AppLayout>

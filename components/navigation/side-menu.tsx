@@ -15,10 +15,13 @@ import {
     X,
     Flame,
     CreditCard,
-    Gift
+    Gift,
+    UserPlus,
+    LogIn
 } from 'lucide-react-native';
 import * as React from 'react';
-import { Modal, Pressable, View, ScrollView } from 'react-native';
+import { Modal, Pressable, View, ScrollView, Animated, Dimensions, Platform, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface SideMenuProps {
     visible: boolean;
@@ -34,174 +37,301 @@ interface MenuItemProps {
 
 function MenuItem({ icon, title, onPress, variant = 'default' }: MenuItemProps) {
     return (
-        <Button
-            variant="ghost"
-            className={`w-full justify-start py-3 px-4 ${variant === 'destructive' ? 'text-red-500' : ''}`}
+        <Pressable
             onPress={onPress}
+            className="w-full text-black"
+            style={{ opacity: 1 }}
+            // android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
         >
-            <View className="flex-row items-center flex-1 min-w-0">
+            <View className={`flex-row items-center py-4 px-4 ${variant === 'destructive' ? '' : ''}`}>
                 <Icon
                     as={icon}
-                    className={`w-5 h-5 mr-3 flex-shrink-0 ${variant === 'destructive' ? 'text-red-500' : ''}`}
+                    className={`w-6 h-6 mr-4 ${variant === 'destructive' ? 'text-red-500' : 'text-black'}`}
                 />
                 <Text
-                    className={`flex-1 text-base leading-3 ${variant === 'destructive' ? 'text-red-500' : ''}`}
+                    className={`flex-1 text-black font-medium ${variant === 'destructive' ? 'text-red-500' : 'text-black'}`}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
                     {title}
                 </Text>
             </View>
-        </Button>
+        </Pressable>
     );
 }
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
     const { session, logout } = useAuth();
+    const insets = useSafeAreaInsets();
+    const slideAnim = React.useRef(new Animated.Value(-300)).current;
+    const opacityAnim = React.useRef(new Animated.Value(0)).current;
+    const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+
+    const menuWidth = Math.min(screenWidth * 0.85, 320); // Máximo 85% del ancho o 320px
+
+    // Debug info
+    React.useEffect(() => {
+        console.log('SideMenu Debug:', {
+            visible,
+            screenWidth,
+            screenHeight,
+            menuWidth,
+            insets,
+            statusBarHeight: StatusBar.currentHeight,
+            platform: Platform.OS
+        });
+    }, [visible]);
+
+    React.useEffect(() => {
+        if (visible) {
+            Animated.parallel([
+                Animated.timing(slideAnim, {
+                    toValue: 0,
+                    duration: 250,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnim, {
+                    toValue: 1,
+                    duration: 250,
+                    useNativeDriver: true,
+                })
+            ]).start();
+        } else {
+            Animated.parallel([
+                Animated.timing(slideAnim, {
+                    toValue: -menuWidth,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityAnim, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                })
+            ]).start();
+        }
+    }, [visible, slideAnim, opacityAnim, menuWidth]);
+
     const navigateAndClose = (route: string) => {
         onClose();
-        router.push(route as any);
+        setTimeout(() => {
+            router.push(route as any);
+        }, 100);
     };
 
     const handleLogout = () => {
         logout();
         onClose();
-        router.push('/sign-in-form');
+        setTimeout(() => {
+            router.push('/sign-in-form');
+        }, 100);
     };
+
+    if (!visible) return null;
 
     return (
         <Modal
             visible={visible}
             transparent
-            animationType="fade"
+            animationType="none"
             onRequestClose={onClose}
+            statusBarTranslucent={false}
         >
-            <View className="flex-1 flex-row">
-                {/* Overlay */}
-                <Pressable
-                    className="flex-1 bg-black/50"
-                    onPress={onClose}
-                />
+            <View style={{ flex: 1 }}>
+                {/* Overlay animado */}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        opacity: opacityAnim
+                    }}
+                >
+                    <Pressable
+                        style={{ flex: 1 }}
+                        onPress={onClose}
+                    />
+                </Animated.View>
 
-                {/* Menú */}
-                <View className="w-72 min-w-[280px] max-w-[90%] bg-background h-full shadow-lg">
+                {/* Menú deslizable */}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        width: menuWidth,
+                        transform: [{ translateX: slideAnim }],
+                        paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) : insets.top,
+                        elevation: 16,
+                        shadowColor: '#000',
+                        shadowOffset: { width: 2, height: 0 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 8,
+                        backgroundColor: 'white',
+                    }}
+                    className="bg-background"
+                >
                     {/* Header del menú */}
-                    <View className="flex-row items-center justify-between p-4 bg-primary">
-                        <Text className="text-lg font-bold text-primary-foreground">
+                    <View className="flex-row items-center justify-between p-4 bg-primary border-b border-border">
+                        <Text className="text-xl font-bold text-primary-foreground">
                             ConvertSystems
                         </Text>
-                        <Button
-                            size="icon"
-                            variant="ghost"
+                        <Pressable
                             onPress={onClose}
-                            className="text-primary-foreground"
+                            className="p-2 rounded-full"
+                            android_ripple={{ color: 'rgba(255,255,255,0.3)', borderless: true }}
                         >
-                            <Icon as={X} className="size-5 text-primary-foreground" />
-                        </Button>
+                            <Icon as={X} className="size-6 text-primary-foreground" />
+                        </Pressable>
                     </View>
 
-                    <ScrollView className="flex-1 px-1 py-2" showsVerticalScrollIndicator={false}>
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            paddingBottom: 40,
+                            flexGrow: 1
+                        }}
+                        bounces={true}
+                    >
+                        {/* Información del usuario si está logueado */}
+                        {session?.user && (
+                            <View className="p-4 border-b border-border">
+                                <Text className="text-lg font-semibold text-foreground">
+                                    {session.user.nombre} {session.user.apellidos}
+                                </Text>
+                                <Text className="text-sm text-muted-foreground">
+                                    {session.user.correo}
+                                </Text>
+                            </View>
+                        )}
+
                         {/* Sección Principal */}
-                        <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
-                            PRINCIPAL
-                        </Text>
+                        <View className="mt-4">
+                            <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
+                                Principal
+                            </Text>
 
-                        <MenuItem
-                            icon={Home}
-                            title="Inicio"
-                            onPress={() => navigateAndClose('/')}
-                        />
+                            <MenuItem
+                                icon={Home}
+                                title="Inicio"
+                                onPress={() => navigateAndClose('/')}
+                            />
 
-                        <MenuItem
-                            icon={User}
-                            title="Mi Perfil"
-                            onPress={() => navigateAndClose('/profile')}
-                        />
+                            {session?.user && (
+                                <MenuItem
+                                    icon={User}
+                                    title="Mi Perfil"
+                                    onPress={() => navigateAndClose('/profile')}
+                                />
+                            )}
+                        </View>
 
-                        <Separator className="my-2" />
+                        <Separator className="my-4 mx-4" />
 
                         {/* Sección Productos */}
-                        <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
-                            PRODUCTOS
-                        </Text>
+                        <View>
+                            <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
+                                Productos
+                            </Text>
 
-                        <MenuItem
-                            icon={Flame}
-                            title="Ofertas Especiales"
-                            onPress={() => navigateAndClose('/ofertas')}
-                        />
-
-                        <MenuItem
-                            icon={CreditCard}
-                            title="Productos Premium"
-                            onPress={() => navigateAndClose('/pago')}
-                        />
-
-                        <MenuItem
-                            icon={Gift}
-                            title="Productos Gratuitos"
-                            onPress={() => navigateAndClose('/gratis')}
-                        />
-
-                        <Separator className="my-2" />
-
-                        {/* Sección Compras */}
-                        <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
-                            COMPRAS
-                        </Text>
-
-                        <MenuItem
-                            icon={ShoppingBag}
-                            title="Mis Compras"
-                            onPress={() => navigateAndClose('/purchases')}
-                        />
-
-                        <MenuItem
-                            icon={Heart}
-                            title="Favoritos"
-                            onPress={() => navigateAndClose('/favorites')}
-                        />
-
-                        <Separator className="my-2" />
-
-                        {/* Sección Configuración */}
-                        <Text className="text-sm font-semibold text-muted-foreground px-4 pt-3 pb-1">
-                            CONFIGURACIÓN
-                        </Text>
-
-                        <MenuItem
-                            icon={Bell}
-                            title="Notificaciones"
-                            onPress={() => navigateAndClose('/notifications')}
-                        />
-
-                        <MenuItem
-                            icon={Settings}
-                            title="Configuración"
-                            onPress={() => navigateAndClose('/settings')}
-                        />
-
-                        <Separator className="my-4" />
-
-                        {/* Logout */}
-                        {session?.user ?
                             <MenuItem
-                                icon={LogOut}
-                                title="Cerrar Sesión"
-                                onPress={handleLogout}
-                                variant="destructive"
-                            /> :
-                            <MenuItem
-                                icon={LogOut}
-                                title="Log In"
-                                onPress={() => navigateAndClose('/sign-in-form')}
-                                variant="default"
+                                icon={Flame}
+                                title="Ofertas Especiales"
+                                onPress={() => navigateAndClose('/ofertas')}
                             />
-                        }
 
+                            <MenuItem
+                                icon={CreditCard}
+                                title="Productos Premium"
+                                onPress={() => navigateAndClose('/pago')}
+                            />
 
+                            <MenuItem
+                                icon={Gift}
+                                title="Productos Gratuitos"
+                                onPress={() => navigateAndClose('/gratis')}
+                            />
+                        </View>
+
+                        {session?.user && (
+                            <>
+                                <Separator className="my-4 mx-4" />
+
+                                {/* Sección Compras */}
+                                <View>
+                                    <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
+                                        Compras
+                                    </Text>
+
+                                    <MenuItem
+                                        icon={ShoppingBag}
+                                        title="Mis Compras"
+                                        onPress={() => navigateAndClose('/purchases')}
+                                    />
+
+                                    <MenuItem
+                                        icon={Heart}
+                                        title="Favoritos"
+                                        onPress={() => navigateAndClose('/favorites')}
+                                    />
+                                </View>
+
+                                <Separator className="my-4 mx-4" />
+
+                                {/* Sección Configuración */}
+                                <View>
+                                    <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
+                                        Configuración
+                                    </Text>
+
+                                    <MenuItem
+                                        icon={Bell}
+                                        title="Notificaciones"
+                                        onPress={() => navigateAndClose('/notifications')}
+                                    />
+
+                                    <MenuItem
+                                        icon={Settings}
+                                        title="Configuración"
+                                        onPress={() => navigateAndClose('/settings')}
+                                    />
+                                </View>
+                            </>
+                        )}
+
+                        <Separator className="my-6 mx-4" />
+
+                        {/* Sección de Autenticación */}
+                        <View className="px-2">
+                            {session?.user ? (
+                                <MenuItem
+                                    icon={LogOut}
+                                    title="Cerrar Sesión"
+                                    onPress={handleLogout}
+                                    variant="destructive"
+                                />
+                            ) : (
+                                <>
+                                    <MenuItem
+                                        icon={LogIn}
+                                        title="Iniciar Sesión"
+                                        onPress={() => navigateAndClose('/sign-in-form')}
+                                    />
+                                    <MenuItem
+                                        icon={UserPlus}
+                                        title="Registrarse"
+                                        onPress={() => navigateAndClose('/sing-up-form')}
+                                    />
+                                </>
+                            )}
+                        </View>
                     </ScrollView>
-                </View>
+                </Animated.View>
             </View>
         </Modal>
     );

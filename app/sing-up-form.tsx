@@ -7,7 +7,7 @@ export default function SignUpScreen() {
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
-            <AppLayout title="Crear Cuenta" showBackButton={true} showMenu={false}>
+            <AppLayout title="Crear Cuenta" showBackButton={true} showMenu={true}>
                 <KeyboardAvoidingView
                     className="flex-1"
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

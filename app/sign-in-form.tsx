@@ -7,7 +7,7 @@ export default function SignInScreen() {
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
-            <AppLayout title="Iniciar Sesión" showBackButton={true} showMenu={false}>
+            <AppLayout title="Iniciar Sesión" showBackButton={true} showMenu={true}>
                 <KeyboardAvoidingView
                     className="flex-1"
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
