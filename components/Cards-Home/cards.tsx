@@ -60,25 +60,20 @@ export function PerfilCard({ data }: {
 }) {
   return (
     <GradientBorderCard>
-      <Card className="w-full max-w-sm p-4 rounded-2xl bg-transparent shadow-lg">
-
-        <CardHeader className="p-0">
-          <CardTitle className="relative flex justify-between gap-4">
-            <View className="flex flex-row items-center gap-2">
-              <Icon as={User} className="size-5 text-black dark:text-white" />
-              <Text className="text-black dark:text-white font-extrabold text-lg">PERFIL</Text>
-            </View>
-            <Image
-              source={data.urlPerfil ? { uri: "https://api.convertsystems.store" + data.urlPerfil } : require("@/assets/images/icon.png")}
-              style={{ width: 60, height: 60, borderRadius: 5 }}
-              resizeMode="contain"
-              className="p-0 m-0"
-            />
-          </CardTitle>
-        </CardHeader>
-        <Separator className="bg-black dark:bg-white p-0 m-0"></Separator>
-
-        <CardContent className="gap-2 p-0">
+      <View className="w-full max-w-sm p-4 gap-4 rounded-2xl">
+        <View className="w-full flex flex-row justify-between gap-4">
+          <View className="flex flex-row items-end gap-2">
+            <Icon as={User} className="size-5 text-black dark:text-white" />
+            <Text className="text-black dark:text-white font-extrabold text-lg">PERFIL</Text>
+          </View>
+          <Image
+            source={data.urlPerfil ? { uri: "https://api.convertsystems.store" + data.urlPerfil } : require("@/assets/images/icon.png")}
+            style={{ width: 60, height: 60, borderRadius: 5 }}
+            resizeMode="contain"
+            className="border"
+          />
+        </View>
+        <View className="gap-2 p-0">
           <View className="flex-row items-center gap-2">
             <Icon as={User} className="size-5 text-black dark:text-white" />
             <Text className="text-black dark:text-white font-semibold">{data.nombre}</Text>
@@ -91,8 +86,8 @@ export function PerfilCard({ data }: {
             <Icon as={Phone} className="size-5 text-black dark:text-white" />
             <Text className="text-black dark:text-white font-semibold">{data.telefono}</Text>
           </View>
-        </CardContent>
-      </Card>
+        </View>
+      </View>
     </GradientBorderCard>
   );
 }
@@ -107,15 +102,9 @@ export function ApartadosCard({ data }: {
 }) {
   return (
     <GradientBorderCard >
-      <Card className="w-full max-w-sm p-4 rounded-2xl bg-transparent shadow-lg">
-
-        <CardHeader className="p-0">
-          <CardTitle className="relative flex items-center justify-center gap-3">
-            <Text className="text-black dark:text-white font-extrabold text-lg">Apartdos</Text>
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className="gap-2 p-0">
+      <View className="w-full max-w-sm p-4 gap-4 rounded-2xl">
+        <Text className="w-full text-center text-black dark:text-white font-extrabold text-lg">Apartdos</Text>
+        <View className="gap-2 p-0">
           <View className="flex-row items-center gap-2">
             <Icon as={Store} className="size-5 text-black dark:text-white" />
             <Text className="text-black dark:text-white font-semibold">Productos En Tienda: {data.tienda}</Text>
@@ -128,8 +117,8 @@ export function ApartadosCard({ data }: {
             <Icon as={Server} className="size-5 text-black dark:text-white" />
             <Text className="text-black dark:text-white font-semibold">Productos Gratis: {data.gratis}</Text>
           </View>
-        </CardContent>
-      </Card>
+        </View>
+      </View>
     </GradientBorderCard>
   );
 }

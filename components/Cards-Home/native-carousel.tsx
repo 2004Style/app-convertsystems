@@ -110,8 +110,8 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
                         useNativeDriver: true,
                     }),
                 ]).start();
-            } else if (relativeIndex <= 2) {
-                // Tarjetas en el stack (atrás)
+            } else if (relativeIndex <= 1) {
+                // Tarjetas en el stack (atrás) - todas del mismo tamaño
                 Animated.parallel([
                     Animated.timing(animation.translateY, {
                         toValue: relativeIndex * 8,
@@ -119,7 +119,7 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
                         useNativeDriver: true,
                     }),
                     Animated.timing(animation.scale, {
-                        toValue: 1 - (relativeIndex * 0.05),
+                        toValue: 1, // Mantener todas las cartas del mismo tamaño
                         duration: 400,
                         useNativeDriver: true,
                     }),
@@ -148,8 +148,8 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
         const relativeIndex = (index - currentIndex + data.length) % data.length;
         const animation = cardAnimations[index];
 
-        // Solo mostrar las primeras 3 tarjetas del stack
-        if (relativeIndex > 2) return null;
+        // Solo mostrar las primeras 2 tarjetas del stack
+        if (relativeIndex > 1) return null;
 
         const zIndex = 10 - relativeIndex;
 
@@ -253,9 +253,9 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
             </View>
 
             {/* Botón para avanzar manualmente */}
-            <TouchableOpacity style={styles.nextButton} onPress={animateToNext}>
+            {/* <TouchableOpacity style={styles.nextButton} onPress={animateToNext}>
                 <Text style={styles.nextButtonText}>Siguiente</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 } const styles = StyleSheet.create({
@@ -264,7 +264,7 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
         alignItems: 'center',
     },
     stackContainer: {
-        height: 300,
+        height: 250,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -331,11 +331,11 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
         backgroundColor: '#6366f1',
     },
     nextButton: {
-        marginTop: 16,
+        marginTop: 7,
         backgroundColor: '#6366f1',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 20,
+        paddingHorizontal: 13,
+        paddingVertical: 7,
+        borderRadius: 5,
     },
     nextButtonText: {
         color: 'white',

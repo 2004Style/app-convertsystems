@@ -8,8 +8,7 @@ import { ApartadosCard, PerfilCard } from '@/components/Cards-Home/cards';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import { useEffect, useState } from 'react';
-import { NativeCarousel } from '@/components/Cards-Home/native-carousel';
-import { DataCarruselWelcome } from '@/components/Cards-Home/carrusel';
+import { DataCarruselWelcome, NativeCarousel } from '@/components/Cards-Home/native-carousel';
 import { formatearFechaParaString } from '@/utils/formatearFecha';
 import { Clock, Database, DollarSign, Download, GitBranch } from 'lucide-react-native';
 
@@ -119,10 +118,14 @@ export default function Screen() {
         <ScrollView className="flex-1" contentContainerStyle={{ padding: 8 }}>
           <View className="items-center gap-6 w-full">
             {session?.user !== null && session?.user !== undefined &&
-              <PerfilCard data={session.user} />
+              <View className="w-full p-5">
+                <PerfilCard data={session.user} />
+              </View>
             }
             {apartados !== null &&
-              <ApartadosCard data={apartados} />
+              <View className='w-full p-5'>
+                <ApartadosCard data={apartados} />
+              </View>
             }
             {masDescargado.length > 0 && (
               <View className="w-full">
