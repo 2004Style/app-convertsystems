@@ -22,7 +22,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AuthProvider>
         <SocketProvider>
-          <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+          <ThemeProvider value={NAV_THEME[colorScheme ?? 'dark']}>
             <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
             <Stack />
             <PortalHost />

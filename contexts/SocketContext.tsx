@@ -2,7 +2,7 @@
 // SocketContext.tsx - Adaptado para React Native
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { urlNotificaciones_Client } from '@/routes/user.routes';
+import { urlBackend_Client } from '@/routes/user.routes';
 import { useAuth } from './AuthContext';
 
 // Crear un contexto para el socket
@@ -33,7 +33,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         console.log('Conectando socket para usuario:', idUser);
 
         // 🟢 Crear nueva conexión (siempre se conecta, autenticado o no)
-        const newSocket = io(urlNotificaciones_Client, {
+        const newSocket = io(urlBackend_Client, {
             path: "/socket",
             query: { id: idUser },
             // Configuraciones adicionales para React Native

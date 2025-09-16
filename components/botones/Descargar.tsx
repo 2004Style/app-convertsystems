@@ -80,7 +80,7 @@ export default function BtnDescargar({ idVersion }: DescargasProps) {
             {session?.user.id ? (
                 // 🚀 DESCARGA DIRECTA SI ES PREMIUM
                 <Button
-                    className="flex-row items-center justify-center gap-2 cursor-pointer transition-all duration-100 text-black hover:text-sky-800 dark:text-white dark:hover:text-sky-400"
+                    className="flex-row items-center justify-center gap-2 cursor-pointer bg-border text-lime-500"
                     onPress={handleDownload}
                 >
                     <Download></Download>

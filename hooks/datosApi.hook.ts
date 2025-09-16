@@ -94,5 +94,28 @@ export const useCosultaApi = () => {
     }
   };
 
-  return { request, sessionStatus: status, session };
+  // Métodos de conveniencia para facilitar el uso
+  const get = (url: string, headers?: Record<string, string>) => request('GET', url, headers);
+
+  const post = (url: string, body?: any, headers?: Record<string, string>) =>
+    request('POST', url, headers, body);
+
+  const put = (url: string, body?: any, headers?: Record<string, string>) =>
+    request('PUT', url, headers, body);
+
+  const patch = (url: string, body?: any, headers?: Record<string, string>) =>
+    request('PATCH', url, headers, body);
+
+  const del = (url: string, headers?: Record<string, string>) => request('DELETE', url, headers);
+
+  return {
+    request,
+    get,
+    post,
+    put,
+    patch,
+    delete: del,
+    sessionStatus: status,
+    session,
+  };
 };

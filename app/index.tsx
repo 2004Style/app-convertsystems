@@ -2,10 +2,15 @@ import { Text } from '@/components/ui/text';
 import { AppLayout } from '@/components/navigation/app-layout';
 import { Link, Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
-import * as React from 'react';
 import { Image, type ImageStyle, ScrollView, View } from 'react-native';
 
-import { ApartadosCard, MasDescargadoCard, MasNuevoCard, PerfilCard } from '@/components/Cards-Home/cards';
+import { ApartadosCard, PerfilCard } from '@/components/Cards-Home/cards';
+import { useAuth } from '@/contexts/AuthContext';
+import { useSocket } from '@/contexts/SocketContext';
+import { useEffect, useState } from 'react';
+import { CarouselPlugin, DataCarruselWelcome } from '@/components/Cards-Home/carrusel';
+import { formatearFechaParaString } from '@/utils/formatearFecha';
+import { Clock, Database, DollarSign, Download, GitBranch } from 'lucide-react-native';
 
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
@@ -16,93 +21,110 @@ const IMAGE_STYLE: ImageStyle = {
   height: 76,
   width: 76,
 };
-const productosNuevos = [
-  {
-    nombre: "Producto X",
-    descripcion: "Versión demo",
-    precio: 0,
-    version: "1.0.0",
-    peso: "458.35 KB",
-    fecha: "07/07/2025"
-  },
-  {
-    nombre: "Producto Z",
-    descripcion: "Versión premium",
-    precio: 10,
-    version: "2.0.0",
-    peso: "1.2 MB",
-    fecha: "08/07/2025"
-  },
-  {
-    nombre: "Producto W",
-    descripcion: "Edición especial",
-    precio: 5,
-    version: "1.5.0",
-    peso: "800 KB",
-    fecha: "06/07/2025"
-  }
-];
 
-const productosDescargados = [
-  {
-    nombre: "Producto Y",
-    categoria: "Web",
-    descargas: 6,
-    version: "1.0.0",
-    peso: "3.72 KB"
-  },
-  {
-    nombre: "Producto A",
-    categoria: "Mobile",
-    descargas: 12,
-    version: "2.1.0",
-    peso: "5.1 MB"
-  },
-  {
-    nombre: "Producto B",
-    categoria: "Desktop",
-    descargas: 8,
-    version: "1.8.0",
-    peso: "10.5 MB"
-  }
-];
+interface apartados {
+  tienda: string;
+  ofertas: string;
+  gratis: string;
+}
+
+interface masNuevo {
+  producto: string;
+  descripcion: string;
+  precio: string;
+  fecha_registro: string;
+  categoria: string;
+  version: string;
+  tamaño: string;
+}
+
+interface masDescargado {
+  version: string;
+  size: string;
+  producto: string;
+  categoria: string;
+  descripcion: string;
+  descargas: string;
+}
 
 export default function Screen() {
   const { colorScheme } = useColorScheme();
-  const [productoNuevoIndex, setProductoNuevoIndex] = React.useState(0);
-  const [productoDescargadoIndex, setProductoDescargadoIndex] = React.useState(0);
+  const { session } = useAuth();
+  const socket = useSocket();
 
-  // Cambiar producto cada 5 segundos
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setProductoNuevoIndex(prev => (prev + 1) % productosNuevos.length);
-      setProductoDescargadoIndex(prev => (prev + 1) % productosDescargados.length);
-    }, 5000);
+  const [apartados, setApartados] = useState<apartados | null>(null);
+  const [masNuevo, setMasNuevo] = useState<DataCarruselWelcome[]>([]);
+  const [masDescargado, setmasDescargado] = useState<DataCarruselWelcome[]>([]);
 
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleApartados = (data: apartados) => {
+      if (data.tienda === '0' && data.ofertas === '0' && data.gratis === '0') return;
+      setApartados(data);
+    };
+
+    const handleMasNuevo = (data: masNuevo[]) => {
+      if (data.length === 0) return;
+      const transformado: DataCarruselWelcome[] = data.map(item => ({
+        title_card: `Mas Nuevo`,
+        nombre: item.producto,
+        categoria: item.categoria,
+        descripcion: item.descripcion,
+        version: [
+          { item: item.precio, icon: DollarSign },
+          { item: item.version, icon: GitBranch },
+          { item: item.tamaño, icon: Database },
+          { item: formatearFechaParaString(item.fecha_registro), icon: Clock },
+        ],
+      }));
+      setMasNuevo(transformado);
+    };
+
+    const handleMasDescargado = (data: masDescargado[]) => {
+      if (data.length === 0) return;
+      const transformado: DataCarruselWelcome[] = data.map(item => ({
+        title_card: `Mas Descargado`,
+        nombre: item.producto,
+        categoria: item.categoria,
+        descripcion: item.descripcion,
+        version: [
+          { item: item.descargas, icon: Download },
+          { item: item.version, icon: GitBranch },
+          { item: item.size, icon: Database },
+        ],
+      }));
+      setmasDescargado(transformado);
+    };
+
+    socket.emit("welcome");
+    socket.on('Apartados', handleApartados);
+    socket.on('masNuevo', handleMasNuevo);
+    socket.on('masDescargado', handleMasDescargado);
+
+    // Función de limpieza para evitar fugas de memoria
+    return () => {
+      socket.off('Apartados', handleApartados);
+      socket.off('masNuevo', handleMasNuevo);
+      socket.off('masDescargado', handleMasDescargado);
+    };
+  }, [socket]);
+
 
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <AppLayout title="ConvertSystems">
-        <ScrollView className="flex-1 p-4">
-          <View className="items-center justify-center gap-8 p-4">
-            <Image source={LOGO[colorScheme ?? 'light']} style={IMAGE_STYLE} resizeMode="contain" />
-            <View className="gap-2 p-4 text-center">
-              <Text className="text-2xl font-bold text-center mb-2">
-                ConvertSystems
-              </Text>
-              <Text className="text-center text-muted-foreground mb-4">
-                Developer Sistem
-              </Text>
-            </View>
-            <View className="gap-4">
-              <PerfilCard />
-              <MasNuevoCard producto={productosNuevos[productoNuevoIndex]} />
-              <ApartadosCard />
-              <MasDescargadoCard producto={productosDescargados[productoDescargadoIndex]} />
-            </View> 
+        <ScrollView className="flex-1 p-2">
+          <View className="items-center gap-8 p-2">
+            {session?.user !== null && session?.user !== undefined &&
+              <PerfilCard data={session.user} />
+            }
+            {apartados !== null &&
+              <ApartadosCard data={apartados} />
+            }
+            <CarouselPlugin data={masDescargado} autoPlayDelay={4000} />
+            <CarouselPlugin data={masNuevo} autoPlayDelay={4000} />
           </View>
         </ScrollView>
       </AppLayout>

@@ -1,7 +1,7 @@
 import { class_planes } from "@/class/planes/planes.class";
 
 export function bg_planes(plan: string): string {
-  return plan == class_planes.premium ? "bg-[#800020] text-white" : plan == class_planes.vip ? "bg-[#ff8c00] text-white" : plan == class_planes.basic ? "bg-[#7cfc00] text-back" : "bg-[#000080] text-white";
+  return plan == class_planes.premium ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" : plan == class_planes.vip ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" : plan == class_planes.basic ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500";
 }
 
 export function bg_planesUser(plan: string): string {

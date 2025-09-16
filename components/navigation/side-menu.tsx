@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
+import { useAuth } from '@/contexts/AuthContext';
 import { router } from 'expo-router';
 import {
     Home,
@@ -56,14 +57,15 @@ function MenuItem({ icon, title, onPress, variant = 'default' }: MenuItemProps) 
 }
 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
+    const { session, logout } = useAuth();
     const navigateAndClose = (route: string) => {
         onClose();
         router.push(route as any);
     };
 
     const handleLogout = () => {
+        logout();
         onClose();
-        // TODO: Implementar lógica de logout
         router.push('/sign-in-form');
     };
 
@@ -182,18 +184,22 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                         <Separator className="my-4" />
 
                         {/* Logout */}
-                        {/* <MenuItem
-                            icon={LogOut}
-                            title="Cerrar Sesión"
-                            onPress={handleLogout}
-                            variant="destructive"
-                        /> */}
-                        <MenuItem
-                            icon={LogOut}
-                            title="Log In"
-                            onPress={() => navigateAndClose('/sign-in-form')}
-                            variant="default"
-                        />
+                        {session?.user ?
+                            <MenuItem
+                                icon={LogOut}
+                                title="Cerrar Sesión"
+                                onPress={handleLogout}
+                                variant="destructive"
+                            /> :
+                            <MenuItem
+                                icon={LogOut}
+                                title="Log In"
+                                onPress={() => navigateAndClose('/sign-in-form')}
+                                variant="default"
+                            />
+                        }
+
+
                     </ScrollView>
                 </View>
             </View>

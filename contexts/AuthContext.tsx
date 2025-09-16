@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Usuarios, backendTokens } from '../interfaces/interfaces';
+import axios from 'axios';
 
 // Tipos para el contexto
 interface User {
@@ -33,6 +34,7 @@ interface AuthContextType {
     login: (sessionData: AuthSession) => Promise<void>;
     logout: () => Promise<void>;
     updateTokens: (tokens: backendTokens) => Promise<void>;
+    refreshTokens: () => Promise<boolean>;
 }
 
 // Crear el contexto
@@ -74,9 +76,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     setSession(parsedSession);
                     setStatus('authenticated');
                 } else {
-                    // Token expirado, limpiar sesión
-                    await clearSession();
-                    setStatus('unauthenticated');
+                    // Token expirado, intentar refrescar
+                    console.log('Token expirado, intentando refrescar...');
+                    const refreshSuccess = await attemptTokenRefresh(parsedSession.backendTokens.refreshToken);
+
+                    if (!refreshSuccess) {
+                        // Si no se pudo refrescar, limpiar sesión
+                        await clearSession();
+                        setStatus('unauthenticated');
+                    }
                 }
             } else {
                 setStatus('unauthenticated');
@@ -137,6 +145,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const attemptTokenRefresh = async (refreshToken: string): Promise<boolean> => {
+        try {
+            const response = await axios.post(`${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`, {
+                refreshToken: refreshToken
+            });
+
+            if (response.data && response.data.data) {
+                const newTokens: backendTokens = response.data.data;
+                await updateTokens(newTokens);
+                setStatus('authenticated');
+                console.log('Tokens refrescados exitosamente');
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error refreshing tokens:', error);
+            return false;
+        }
+    };
+
+    const refreshTokens = async (): Promise<boolean> => {
+        if (!session?.backendTokens.refreshToken) {
+            console.error('No hay refresh token disponible');
+            return false;
+        }
+
+        return await attemptTokenRefresh(session.backendTokens.refreshToken);
+    };
+
     const clearSession = async (): Promise<void> => {
         await AsyncStorage.multiRemove([
             STORAGE_KEYS.SESSION,
@@ -151,6 +188,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         logout,
         updateTokens,
+        refreshTokens,
     };
 
     return (

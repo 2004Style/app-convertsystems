@@ -39,6 +39,8 @@ export function SignInForm() {
 
       if (result.alert === 'success') {
         Alert.alert('Éxito', 'Login exitoso');
+        return router.replace('/');
+
       } else {
         Alert.alert('Error', result.message || 'Error en el login');
       }
@@ -47,17 +49,11 @@ export function SignInForm() {
     }
   };
 
-  // if (isAuthenticated) {
-  //   return (
-  //     <View style={{ padding: 20 }}>
-  //       <Text>Usuario ya autenticado ✅</Text>
-  //     </View>
-  //   );
-  // }
-  if (isAuthenticated) {
-    return router.replace('/');
-    
-  }
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isAuthenticated]);
 
   function onSubmit() {
     handleLogin();

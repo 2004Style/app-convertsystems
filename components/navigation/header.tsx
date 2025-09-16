@@ -23,8 +23,6 @@ export function Header({
     const pathname = usePathname();
     const { colorScheme, toggleColorScheme } = useColorScheme();
 
-    // Determinar si estamos en páginas de auth
-    const isAuthPage = pathname === '/sign-in-form' || pathname === '/sing-up-form';
 
     const handleBack = () => {
         if (router.canGoBack()) {
@@ -38,7 +36,7 @@ export function Header({
         <View className="flex-row items-center justify-between p-4 bg-background border-b border-border">
             {/* Lado izquierdo */}
             <View className="flex-row items-center flex-1">
-                {(showBackButton || isAuthPage) && (
+                {(showBackButton ) && (
                     <Button
                         size="icon"
                         variant="ghost"
@@ -70,7 +68,7 @@ export function Header({
                 </Button>
 
                 {/* Menú hamburguesa (solo en páginas no-auth) */}
-                {showMenu && !isAuthPage && onMenuPress && (
+                {showMenu && onMenuPress && (
                     <Button
                         size="icon"
                         variant="ghost"

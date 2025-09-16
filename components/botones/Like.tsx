@@ -49,8 +49,11 @@ export default function BtnLike({ id, like, likesCount }: likeProps) {
 
         const { alert, data } = await request(newStatus ? "POST" : "DELETE", `${LikesB_Client}/${id}`);
         if (alert === "success") {
-            setLikeCount(data);
-            //console.log(data)
+            if (typeof data === 'number') {
+                setLikeCount(data);
+            } else {
+                setLikeCount(data?.data ?? 0);
+            }
             return
         }
     };
