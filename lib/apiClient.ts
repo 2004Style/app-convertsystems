@@ -5,7 +5,7 @@ import { backendTokens } from '../interfaces/interfaces';
 // Configuración base de Axios
 const apiConfig: AxiosRequestConfig = {
   baseURL: process.env.EXPO_PUBLIC_API_URL,
-  timeout: 10000, // 10 segundos
+  timeout: 20000, // 20 segundos
   headers: {
     'Content-Type': 'application/json',
     'X-Forwarded-Proto': 'https',

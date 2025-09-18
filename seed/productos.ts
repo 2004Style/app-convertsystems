@@ -1,4 +1,4 @@
-import { Productos } from "@/interfaces/interfaces";
+import { Productos } from '@/interfaces/interfaces';
 
 export const seed_productos: Productos[] = [
   {
@@ -10,7 +10,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 120, ventas: 35 },
     likeCount: 120,
     nombre: 'Editor de Código Pro',
-    descripcion: 'Un editor ligero y rápido para desarrolladores.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 49.99,
     precio_actual: { precio: 39.99, descuento: 20 },
     fecha_registro: new Date('2024-07-15'),
@@ -37,7 +38,7 @@ export const seed_productos: Productos[] = [
         producto_id: 'p1',
         numero_version: '1.0.0',
         urlarchivo: 'https://example.com/editor-v1.zip',
-        fecha_lanzamiento: new Date('2024-07-20'),
+        fecha_lanzamiento: new Date('2025-09-17'),
         descripcion_cambios: 'Versión inicial',
         size: '50MB',
         productos: {} as Productos,
@@ -55,7 +56,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 50, ventas: 20 },
     likeCount: 50,
     nombre: 'Antivirus Shield',
-    descripcion: 'Protege tu equipo contra virus y malware.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 29.99,
     precio_actual: { precio: 29.99, descuento: 0 },
     fecha_registro: new Date('2024-08-01'),
@@ -100,7 +102,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 200, ventas: 60 },
     likeCount: 200,
     nombre: 'Suite de Ofimática Plus',
-    descripcion: 'Procesador de texto, hojas de cálculo y presentaciones.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 79.99,
     precio_actual: { precio: 59.99, descuento: 25 },
     fecha_registro: new Date('2024-06-10'),
@@ -145,7 +148,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 80, ventas: 15 },
     likeCount: 80,
     nombre: 'IDE Mobile Studio',
-    descripcion: 'Desarrollo de apps móviles en un solo entorno.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 99.99,
     precio_actual: { precio: 99.99, descuento: 0 },
     fecha_registro: new Date('2024-04-22'),
@@ -190,7 +194,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 400, ventas: 150 },
     likeCount: 400,
     nombre: 'PhotoMaster Studio',
-    descripcion: 'Edición avanzada de imágenes con IA.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 59.99,
     precio_actual: { precio: 44.99, descuento: 25 },
     fecha_registro: new Date('2024-02-10'),
@@ -235,7 +240,8 @@ export const seed_productos: Productos[] = [
     _count: { likes: 400, ventas: 150 },
     likeCount: 400,
     nombre: 'PhotoMaster Studio',
-    descripcion: 'Edición avanzada de imágenes con IA.',
+    descripcion:
+      'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 0,
     precio_actual: { precio: 0, descuento: 0 },
     fecha_registro: new Date('2024-02-10'),
@@ -271,7 +277,7 @@ export const seed_productos: Productos[] = [
     _count: { likes: 400, ventas: 150 },
     likeCount: 400,
     nombre: 'App Creativa Lite',
-    descripcion: 'Versión gratuita con funciones limitadas de PhotoMaster Studio.',
+    descripcion: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isnt anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.',
     precio: 0,
     precio_actual: { precio: 0, descuento: 0 },
     fecha_registro: new Date('2024-02-10'),

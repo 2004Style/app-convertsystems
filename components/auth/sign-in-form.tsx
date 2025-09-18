@@ -38,7 +38,7 @@ export function SignInForm() {
       });
 
       if (result.alert === 'success') {
-        Alert.alert('Éxito', 'Login exitoso');
+        // Alert.alert('Éxito', 'Login exitoso');
         return router.replace('/');
 
       } else {
@@ -110,15 +110,15 @@ export function SignInForm() {
               <Text>{loading ? 'Iniciando sesión...' : 'Login'}</Text>
             </Button>
           </View>
-          <View className="flex-row items-center">
+          {/* <View className="flex-row items-center">
             <Separator className="flex-1" />
             <Text className="text-muted-foreground px-4 text-sm">Continuar con</Text>
             <Separator className="flex-1" />
           </View>
-          <SocialConnections />
+          <SocialConnections /> */}
           <Text className="text-center items-center justify-center text-sm">
             No tienes una cuenta aún?{' '}
-            <Link href="/sing-up-form" className="text-sm underline underline-offset-4">Registrar</Link>
+            <Link href="/auth/register" className="text-sm underline underline-offset-4">Registrar</Link>
           </Text>
         </CardContent>
       </Card>

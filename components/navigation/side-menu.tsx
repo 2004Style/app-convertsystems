@@ -123,7 +123,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
         logout();
         onClose();
         setTimeout(() => {
-            router.push('/sign-in-form');
+            router.push('/auth/login');
         }, 100);
     };
 
@@ -242,19 +242,19 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                             <MenuItem
                                 icon={Flame}
                                 title="Ofertas Especiales"
-                                onPress={() => navigateAndClose('/ofertas')}
+                                onPress={() => navigateAndClose('/shop/ofertas')}
                             />
 
                             <MenuItem
                                 icon={CreditCard}
                                 title="Productos Premium"
-                                onPress={() => navigateAndClose('/pago')}
+                                onPress={() => navigateAndClose('/shop/pagos')}
                             />
 
                             <MenuItem
                                 icon={Gift}
                                 title="Productos Gratuitos"
-                                onPress={() => navigateAndClose('/gratis')}
+                                onPress={() => navigateAndClose('/shop/gratis')}
                             />
                         </View>
 
@@ -320,12 +320,12 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                                     <MenuItem
                                         icon={LogIn}
                                         title="Iniciar Sesión"
-                                        onPress={() => navigateAndClose('/sign-in-form')}
+                                        onPress={() => navigateAndClose('/auth/login')}
                                     />
                                     <MenuItem
                                         icon={UserPlus}
                                         title="Registrarse"
-                                        onPress={() => navigateAndClose('/sing-up-form')}
+                                        onPress={() => navigateAndClose('/auth/register')}
                                     />
                                 </>
                             )}

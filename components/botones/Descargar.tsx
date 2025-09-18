@@ -11,7 +11,7 @@ interface DescargasProps {
     idVersion: string;
 }
 
-export default function BtnDescargar({ idVersion }: DescargasProps) {
+export function BtnDescargar({ idVersion }: DescargasProps) {
     const socket = useSocket();
     const { session } = useAuth();
     const [descargaHabilitada, setDescargaHabilitada] = useState(false);

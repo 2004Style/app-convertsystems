@@ -265,7 +265,7 @@ export function SignUpForm() {
             </Button>
             <Text className="text-center text-sm">
               Ya tienes una cuenta?{' '}
-              <Link href="/sign-in-form" className="text-sm underline underline-offset-4">log-in</Link>
+              <Link href="/auth/login" className="text-sm underline underline-offset-4">log-in</Link>
             </Text>
           </View>
         </CardContent>

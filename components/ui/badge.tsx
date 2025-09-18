@@ -2,7 +2,7 @@ import { TextClassContext } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
 import * as Slot from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Platform, View, ViewProps } from 'react-native';
+import { Platform, View, ViewProps, Text } from 'react-native';
 
 const badgeVariants = cva(
   cn(
@@ -54,11 +54,15 @@ type BadgeProps = ViewProps &
     asChild?: boolean;
   } & VariantProps<typeof badgeVariants>;
 
-function Badge({ className, variant, asChild, ...props }: BadgeProps) {
+function Badge({ className, variant, asChild, children, ...props }: BadgeProps) {
   const Component = asChild ? Slot.View : View;
+
   return (
     <TextClassContext.Provider value={badgeTextVariants({ variant })}>
-      <Component className={cn(badgeVariants({ variant }), className)} {...props} />
+      <Component className={cn(badgeVariants({ variant }), className)} {...props}>
+        {/* ✅ Si es texto plano, lo envolvemos en <Text> */}
+        {typeof children === 'string' ? <Text>{children}</Text> : children}
+      </Component>
     </TextClassContext.Provider>
   );
 }

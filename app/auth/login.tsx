@@ -1,13 +1,13 @@
-import { SignUpForm } from '@/components/sign-up-form';
+import { SignInForm } from '@/components/auth/sign-in-form';
 import { AppLayout } from '@/components/navigation/app-layout';
 import { Stack } from 'expo-router';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 
-export default function SignUpScreen() {
+export default function SignInScreen() {
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
-            <AppLayout title="Crear Cuenta" showBackButton={true} showMenu={true}>
+            <AppLayout title="Iniciar Sesión" showBackButton={true} showMenu={true}>
                 <KeyboardAvoidingView
                     className="flex-1"
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -20,7 +20,7 @@ export default function SignUpScreen() {
                         showsVerticalScrollIndicator={false}
                     >
                         <View className="w-full max-w-sm mx-auto">
-                            <SignUpForm />
+                            <SignInForm />
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>

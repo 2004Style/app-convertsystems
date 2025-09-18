@@ -11,11 +11,12 @@ interface likeProps {
     like: boolean;
     likesCount: number;
 }
-export default function BtnLike({ id, like, likesCount }: likeProps) {
+
+export function BtnLike({ id, like, likesCount }: likeProps) {
     const { request } = useCosultaApi();
     const { session } = useAuth();
-    const [isChecked, setIsChecked] = useState<boolean>(false); // Estado para el checkbox
-    const [likeCount, setLikeCount] = useState<number>(likesCount); // Estado para el contador de likes
+    const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [likeCount, setLikeCount] = useState<number>(likesCount);
     const scaleValue = new Animated.Value(1);
 
     useEffect(() => {

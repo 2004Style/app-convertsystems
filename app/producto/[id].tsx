@@ -1,32 +1,27 @@
 import { useState, useEffect } from "react";
-
 import { ProductoConRequisitosArray } from "@/interfaces/interfaces";
 import { TiendaB_Client } from "@/routes/user.routes";
-
-import BtnLike from "@/components/botones/Like";
-import BtnDescargar from "@/components/botones/Descargar";
+import { BtnLike } from "@/components/botones/Like";
+import { BtnDescargar } from "@/components/botones/Descargar";
 import { formatearFechaParaString } from "@/utils/formatearFecha";
 import { preciocondescuento } from "@/utils/preciocondescuento";
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, Calendar, Tag, Info, CheckCircle2 } from "lucide-react-native";
 import { bg_planes } from "@/utils/bg.clases.planes";
 import { useCosultaApi } from "@/hooks/datosApi.hook";
 import { TipodeCompra } from "@/utils/url-compras";
-import Payment from "@/components/payments/payments-methods";
+import { Payment } from "@/components/payments/payments-methods";
 import { Text } from "@/components/ui/text";
 import { View, Image, ScrollView } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { AppLayout } from "@/components/navigation";
 import { Icon } from "@/components/ui/icon";
-
-// Importa la imagen directamente
 const cardBackground = require("@/assets/card_background.svg");
 
 export default function ProductoDetails() {
     const { id } = useLocalSearchParams();
-    const { request, sessionStatus } = useCosultaApi();
+    const { get, sessionStatus } = useCosultaApi();
     const [producto, setProducto] = useState<ProductoConRequisitosArray | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,44 +30,15 @@ export default function ProductoDetails() {
     useEffect(() => {
         if (sessionStatus !== "authenticated") return;
         const fetchConsulta = async () => {
-            const { alert, data } = await request("GET", `${TiendaB_Client}/${id}`);
+            const { alert, data } = await get(`${TiendaB_Client}/${id}`);
             setLoading(false);
             if (alert === "success") {
                 setProducto({
                     ...data,
-                    requisitos_tecnicos: (() => {
-                        const rt = data.requisitos_tecnicos;
-
-                        // Caso 1: Si viene como string, lo intentamos parsear
-                        if (typeof rt === 'string' && rt.trim() !== '') {
-                            try {
-                                const parsed = JSON.parse(rt);
-                                return Array.isArray(parsed) ? parsed : [parsed]; // ✅ Garantizamos array
-                            } catch (error) {
-                                console.error("Error al parsear requisitos_tecnicos:", error);
-                                return []; // Si falla el JSON, devolvemos array vacío
-                            }
-                        }
-
-                        // Caso 2: Si ya es array
-                        if (Array.isArray(rt)) {
-                            return rt;
-                        }
-
-                        // Caso 3: Si es objeto, lo envolvemos en un array
-                        if (rt && typeof rt === 'object') {
-                            return [rt];
-                        }
-
-                        // Caso 4: Si es null, undefined o vacío
-                        return [];
-                    })(),
+                    requisitos_tecnicos: (JSON.parse(data.requisitos_tecnicos)),
                 });
-
-
                 const precioDescuento = preciocondescuento(Number(producto?.precio), Number(producto?.productos_ofertas?.[0].ofertas.descuento ?? 0))
                 setDescuentoAplicado(precioDescuento)
-                //console.log(descuentoAplicado)
                 return
             }
             setError("Error al obtener el producto");

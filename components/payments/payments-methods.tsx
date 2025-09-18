@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text } from 'react-native';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,7 +17,7 @@ interface paymentsMethodsProps {
     classNameDialog?: string;
 }
 
-export default function Payment({ id, precio, classNamebtn = "", comprar, classNameDialog = "" }: paymentsMethodsProps) {
+export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialog = "" }: paymentsMethodsProps) {
     const { session, status } = useAuth();
     const [selectedPayment, setSelectedPayment] = useState<"paypal" | "mercadopago" | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
