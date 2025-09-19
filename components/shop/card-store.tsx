@@ -1,61 +1,22 @@
-type CardVentas = CardInformacionProps & { fecha_registro: Date, plan: string | null };
-type CardVentasProps = {
-    card: CardVentas;
-}
-
-export function CardTienda({ card }: CardVentasProps) {
-
-    return (
-        <View id={card.id} className="relative flex flex-col gap-4 p-4 cursor-default bg-slate-300 text-fr-v-card shadow-lg min-w-[290px] w-[100%] box-border rounded">
-            {card.descuento &&
-                <CardPorcentaje descuento={card.descuento} />
-            }
-            <CardImagen fecha_registro={card.fecha_registro} descuento={card.descuento} />
-            <CardPlan plan={card.plan ?? (Number(card.precio ?? 0) > 0 ? "pago" : "free")} />
-            <CardInformacion
-                id={card.id}
-                nombre={card.nombre}
-                categoria={card.categoria}
-                precio={card.precio}
-                descuento={card.descuento}
-                descipcion={card.descipcion}
-                version={card.version}
-            />
-        </View>
-    )
-}
-
-export function CardPorcentaje({ descuento }: { descuento: string }) {
-    return (
-        <View className="absolute -top-2 right-2 overflow-hidden" style={{ width: 90, height: 110 }} >
-            <View className=" bg-purple-700 h-[70%]" />
-            <View className="absolute -rotate-[55deg] bg-purple-700 -z-10 translate-y-0 -translate-x-3" style={{ width: 90, height: 90 }} />
-            <View className="absolute rotate-[55deg] bg-purple-700 -z-10 translate-y-0 translate-x-3" style={{ width: 90, height: 90 }} />
-            <Text className="absolute top-0 left-0 flex items-center justify-center font-bold -translate-y-3 text-3xl " style={{ height: '100%', width: '100%', textAlign: "center", verticalAlign: "middle", color: "#eeff77" }}>{descuento}%</Text>
-        </View>
-    )
-}
-
-export function CardPlan({ plan }: { plan: string }) {
-    return (
-        <View className={`absolute -top-2 -left-2 overflow-hidden items-center justify-center`}
-            style={{ height: 140, width: 140 }}
-        >
-            <View className="h-2 w-4 bg-lime-800 absolute top-0 right-0" />
-            <View className="h-4 w-2 bg-lime-800 absolute bottom-0 left-0" />
-            <Text className="text-white text-xl text-center -translate-y-4 -translate-x-4 font-bold bg-lime-500 py-2 w-[200%] -rotate-45" style={{ letterSpacing: 3, textTransform: "uppercase" }}>{plan}</Text>
-        </View>
-    )
-}
-
+import { diaspasados } from "@/utils/diaspasados";
+import { Alert, Image, Text, View } from "react-native";
+import { router } from "expo-router";
+import { LucideIcon } from "lucide-react-native";
+import { Button } from "../ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import SVGGlareEffect from "../glareEfect";
+import { bg_planesGradient } from "@/utils/bg.clases.planes";
 import { preciocondescuento } from "@/utils/preciocondescuento";
+import GradientText from "../gradientes/texto";
+import { Icon } from "../ui/icon";
+const img = require("@/assets/images/icon.png");
 
-export interface VersionProps {
+export type VersionProps = {
     icon: LucideIcon
     valor: string;
 }
 
-export interface CardInformacionProps {
+export type CardInformacionProps = {
     id: string;
     nombre: string;
     categoria: string;
@@ -65,75 +26,92 @@ export interface CardInformacionProps {
     version: VersionProps[];
 }
 
-export function CardInformacion({ id, nombre, categoria, precio, descuento, descipcion, version }: CardInformacionProps) {
+export type CardVentas = CardInformacionProps & { fecha_registro: Date, plan: string | null };
+export type CardVentasProps = {
+    card: CardVentas;
+}
+
+export function CardTienda({ card }: CardVentasProps) {
+
+    const plan = card.plan ?? (Number(card.precio ?? 0) > 0 ? "pago" : "free")
+
+    const diasP = diaspasados(card.fecha_registro)
+
     const { status } = useAuth();
-    const DescuentoAplicado = preciocondescuento(Number(precio), Number(descuento))
+    const DescuentoAplicado = preciocondescuento(Number(card.precio), Number(card.descuento))
 
     const handleInformation = () => {
         if (status === "unauthenticated") {
             Alert.alert("para poder ingresar debe estar autenticado");
             return;
         }
-        router.replace(`/producto/${id}`);
+        router.replace(`/producto/${card.id}`);
     }
+
     return (
-        <View className="relative">
-            <Text className="text-xl font-semibold mb-1 text-black">{nombre}</Text>
-            <Text className="text-sm w-min text-emerald-800 font-bold">{categoria}</Text>
-            {precio &&
-                <Text className={`text-lg font-bold ${descuento ? `text-red-400 line-through` : `text-cyan-800`}`}>${precio}</Text>
+        <View id={card.id} className="relative flex flex-col gap-4 p-4 shadow-2xl min-w-[290px] w-[100%] box-border rounded bg-white dark:bg-black">
+            {/* apartado de descuento */}
+            {card.descuento &&
+                <View className="absolute -top-2 right-2 overflow-hidden" style={{ width: 90, height: 110, zIndex: 10 }} >
+                    <View className=" bg-purple-700 h-[70%]" />
+                    <View className="absolute -rotate-[55deg] bg-purple-700 -z-10 translate-y-0 -translate-x-3" style={{ width: 90, height: 90 }} />
+                    <View className="absolute rotate-[55deg] bg-purple-700 -z-10 translate-y-0 translate-x-3" style={{ width: 90, height: 90 }} />
+                    <Text className="absolute top-0 left-0 flex items-center justify-center font-bold -translate-y-3 text-3xl " style={{ height: '100%', width: '100%', textAlign: "center", verticalAlign: "middle", color: "#eeff77" }}>{card.descuento}%</Text>
+                </View>
             }
-            {descuento &&
-                <Text className="text-lg font-bold price-v-card">${DescuentoAplicado}</Text>
-            }
-            <Text className="text-sm mb-4 line-clamp-4 overflow-hidden text-ellipsis ">{descipcion}</Text>
-            <View className="flex flex-row items-center justify-between mb-4">
-                {version.map(ver => (
-                    <View key={ver.valor} className="flex flex-row items-center gap-1">
-                        <ver.icon />
-                        <Text className="text-sm ">{ver.valor}</Text>
-                    </View>
-                ))}
+
+            {/* apartado de imagen */}
+            <View className="relative flex items-center justify-center w-full min-h-45 h-45 overflow-hidden" >
+                <Image
+                    style={{ height: 224, width: '100%', zIndex: -1 }}
+                    source={img}
+                    alt="imagen de la empresa"
+                />
+                {!card.descuento && diasP < 2 &&
+                    <Text className="absolute font-bold top-2 right-2 text-xs px-4 py-2 rounded-md">NEW</Text>
+                }
             </View>
 
-            <Button
-                onPress={handleInformation}
-                // href={`/producto/${id}`}
-                className=" w-full bg-blue-500 py-2 rounded-sm"
+            {/* apartado de etiqueta de plan */}
+            <View className={`absolute -top-2 -left-2 overflow-hidden items-center justify-center`}
+                style={{ height: 140, width: 140 }}
             >
-                <Text className="text-white font-semibold">
-                    Ver Informacion
-                </Text>
-            </Button>
-        </View >
-    )
-}
+                <View className="h-2 w-4 absolute top-0 right-1" style={{ backgroundColor: bg_planesGradient(plan).Color3 }} />
+                <View className="h-4 w-2 absolute left-0 bottom-1" style={{ backgroundColor: bg_planesGradient(plan).Color3 }} />
+                <SVGGlareEffect clase="z-10 -rotate-45 -translate-y-4 -translate-x-4" plan={plan} />
+            </View>
 
-import { diaspasados } from "@/utils/diaspasados";
-import { Alert, Image, Text, View } from "react-native";
-import { router } from "expo-router";
-import { LucideIcon } from "lucide-react-native";
-import { Button } from "../ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-const img = require("@/assets/card_background.svg");
+            {/* apartado de informacion */}
+            <View className="relative">
+                <Text className="text-xl font-extrabold mb-1 text-black dark:text-white">{card.nombre}</Text>
+                <GradientText colors={["#ff8c00", "#ff0000"]} texto={card.categoria} fontsize={16} />
+                {/* <Text className="text-sm w-min text-emerald-800 font-bold">{card.categoria}</Text> */}
+                {card.precio &&
+                    <Text className={`text-lg font-bold ${card.descuento ? `text-red-400 line-through` : `text-cyan-600`}`}>${card.precio}</Text>
+                }
+                {card.descuento &&
+                    // <GradientText colors={["#7cfc00", "#ffff00"]} texto={DescuentoAplicado.toString()} fontsize={16} />
+                    <Text className="text-lg font-bold text-blue-700">${DescuentoAplicado}</Text>
+                }
+                <Text className="text-sm mb-4 line-clamp-4 overflow-hidden text-ellipsis text-black dark:text-white">{card.descipcion}</Text>
+                <View className="flex flex-row items-center justify-between mb-4">
+                    {card.version.map(ver => (
+                        <View key={ver.valor} className="flex flex-row items-center gap-1">
+                            <Icon as={ver.icon}  />
+                            <Text className="text-sm text-black dark:text-white">{ver.valor}</Text>
+                        </View>
+                    ))}
+                </View>
 
-interface CardImagenProps {
-    fecha_registro: Date;
-    descuento?: string;
-}
-
-export function CardImagen({ fecha_registro, descuento }: CardImagenProps) {
-    const diasP = diaspasados(fecha_registro)
-    return (
-        <View className="relative flex items-center justify-center w-full min-h-45 h-45 overflow-hidden" >
-            <Image
-                className="w-full"
-                source={img}
-                alt="imagen de la empresa"
-            />
-            {!descuento && diasP < 2 &&
-                <Text className="absolute font-bold top-2 right-2 text-xs px-4 py-2 rounded-md">NEW</Text>
-            }
+                <Button
+                    onPress={handleInformation}
+                    className=" w-full bg-blue-500 py-2 rounded-sm"
+                >
+                    <Text className="text-white font-semibold">
+                        Ver Informacion
+                    </Text>
+                </Button>
+            </View >
         </View>
     )
 }

@@ -19,9 +19,6 @@ const AdBanner: React.FC<AdBannerProps> = ({ adSlot }) => {
         }
     }, []);
 
-    //console.log("adsbygoogle:", window.adsbygoogle);
-
-
     return (
         <View className="ad-container">
             <View

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Text, View } from "react-native";
 
 interface PaginationProps {
@@ -19,7 +19,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <>{totalPages > 1 &&
             <View className="flex flex-row gap-2 justify-evenly">
                 <Button onPress={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                    <Text className="text-white">Anterior</Text>
+                    <Text className="text-white">{'<<'}</Text>
                 </Button>
 
                 {currentPage > 4 && (
@@ -28,7 +28,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                     </Button>
                 )}
 
-                {currentPage > 3 && <Text className="text-white">...</Text>}
+                {currentPage > 3 && <Text className="text-white bg-lime-500">...</Text>}
 
                 {[...Array(5)].map((_, index) => {
                     const page = currentPage - 2 + index;
@@ -55,7 +55,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
                 )}
 
                 <Button onPress={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                    <Text className="text-white">Siguiente</Text>
+                    <Text className="text-white">{'>>'}</Text>
                 </Button>
             </View>
         }</>

@@ -41,7 +41,7 @@ export function useConfirmRegisterForm() {
         if (Platform.OS === 'web') {
           window.location.href = '/sign-in-form';
         } else {
-          router.push('/sign-in-form');
+          router.push('/auth/login');
         }
       } else {
         Alert.alert('Error al confirmar el registro', res.message || 'Error desconocido');
@@ -98,10 +98,6 @@ export function useRegisterForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof SchemaRegister>, imageUri?: string) => {
-    console.log('=== INICIO onSubmit ===');
-    console.log('=== REGISTRO DEBUG ===');
-    console.log('Datos del formulario:', data);
-    console.log('Tipo de fecha_nacimiento:', typeof data.fecha_nacimiento, data.fecha_nacimiento);
 
     // Verificar que todos los campos requeridos estén presentes
     if (!data.perfil || data.perfil.trim() === '') {
@@ -127,9 +123,6 @@ export function useRegisterForm() {
 
       // Imagen OBLIGATORIA - el servidor siempre espera un archivo 'perfil'
       if (data.perfil) {
-        console.log('Procesando imagen. Platform:', Platform.OS);
-        console.log('URI de imagen:', data.perfil);
-
         const filename = data.perfil.split('/').pop() || 'profile.jpg';
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : 'image/jpeg';
@@ -164,21 +157,6 @@ export function useRegisterForm() {
         return;
       }
 
-      console.log('FormData preparado. Campos incluidos:');
-      console.log('  nombre:', data.nombre);
-      console.log('  apellidos:', data.apellidos);
-      console.log('  correo:', data.correo);
-      console.log('  telefono:', data.telefono);
-      console.log('  direccion:', data.direccion);
-      console.log('  fecha_nacimiento:', fechaFormateada, '(formato YYYY-MM-DD)');
-      console.log('  contrasena:', '[OCULTA]');
-      console.log('  perfil: [ARCHIVO]', data.perfil ? 'SÍ' : 'NO');
-
-      console.log('=== ENVIANDO REQUEST ===');
-      console.log('URL:', `${process.env.EXPO_PUBLIC_API_URL}/auth/register`);
-      console.log('Método: POST');
-      console.log('FormData configurado completamente');
-
       // Usar fetch directo igual que en la web (SIN headers Content-Type)
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
@@ -192,11 +170,6 @@ export function useRegisterForm() {
 
       const res = await response.json();
 
-      console.log('=== RESPUESTA DEL SERVIDOR ===');
-      console.log('Status:', response.status);
-      console.log('Headers:', Object.fromEntries(response.headers));
-      console.log('Response body:', res);
-
       if (response.ok) {
         Alert.alert('Registro exitoso', 'Por favor revisa tu correo para confirmar tu cuenta.', [
           {
@@ -206,7 +179,7 @@ export function useRegisterForm() {
               if (Platform.OS === 'web') {
                 window.location.href = '/sign-in-form';
               } else {
-                router.push('/sign-in-form');
+                router.push('/auth/login');
               }
             },
           },

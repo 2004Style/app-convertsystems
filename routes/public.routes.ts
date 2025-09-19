@@ -28,3 +28,5 @@ export const PlanSuscripcionB_Public = `${urlBackend_Public}/planes`;
 
 //rutas de la tienda
 export const ProductosDePagaB_Public = `${TiendaB_Public}/tienda`; //get
+export const ProductosGratisgaB_Public = `${TiendaB_Public}/gratis`; //get
+export const ProductosEnOfertasB_Public = `${TiendaB_Public}/ofertas`; //get

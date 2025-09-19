@@ -70,17 +70,17 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     const menuWidth = Math.min(screenWidth * 0.85, 320); // Máximo 85% del ancho o 320px
 
     // Debug info
-    React.useEffect(() => {
-        console.log('SideMenu Debug:', {
-            visible,
-            screenWidth,
-            screenHeight,
-            menuWidth,
-            insets,
-            statusBarHeight: StatusBar.currentHeight,
-            platform: Platform.OS
-        });
-    }, [visible]);
+    // React.useEffect(() => {
+    //     console.log('SideMenu Debug:', {
+    //         visible,
+    //         screenWidth,
+    //         screenHeight,
+    //         menuWidth,
+    //         insets,
+    //         statusBarHeight: StatusBar.currentHeight,
+    //         platform: Platform.OS
+    //     });
+    // }, [visible]);
 
     React.useEffect(() => {
         if (visible) {

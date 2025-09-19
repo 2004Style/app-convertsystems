@@ -30,7 +30,6 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
         // Determinar el ID del usuario (igual que en web)
         const idUser = session?.user?.id === "" ? "invitado" : session?.user?.id || "invitado";
-        console.log('Conectando socket para usuario:', idUser);
 
         // 🟢 Crear nueva conexión (siempre se conecta, autenticado o no)
         const newSocket = io(urlBackend_Client, {

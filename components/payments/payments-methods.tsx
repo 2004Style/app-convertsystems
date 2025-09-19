@@ -86,7 +86,9 @@ export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialo
                 className={`w-full ${classNamebtn}`}
                 onPress={() => setShowPaymentDialog(true)}
             >
-                Realizar pago
+                <Text className='text-white font-bold'>
+                    Realizar pago
+                </Text>
             </Button>
 
             <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>

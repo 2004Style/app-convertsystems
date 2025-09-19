@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, Alert } from 'react-native';
 import { LikesB_Client } from '@/routes/user.routes';
 import { useCosultaApi } from "@/hooks/datosApi.hook";
 import { useAuth } from "@/contexts/AuthContext";
@@ -26,7 +26,7 @@ export function BtnLike({ id, like, likesCount }: likeProps) {
 
     const toggleLike = async () => {
         if (!session?.user.nombre) {
-            return console.log("Usted debe iniciar sesión primero");
+            return Alert.alert("Usted debe iniciar sesión primero");
         }
 
         const newStatus = !isChecked;

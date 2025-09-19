@@ -1,8 +1,7 @@
-import { Text } from '@/components/ui/text';
 import { AppLayout } from '@/components/navigation/app-layout';
-import { Link, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
-import { Image, type ImageStyle, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { ApartadosCard, PerfilCard } from '@/components/Cards-Home/cards';
 import { useAuth } from '@/contexts/AuthContext';
@@ -15,11 +14,6 @@ import { Clock, Database, DollarSign, Download, GitBranch } from 'lucide-react-n
 const LOGO = {
   light: require('@/assets/images/react-native-reusables-light.png'),
   dark: require('@/assets/images/react-native-reusables-dark.png'),
-};
-
-const IMAGE_STYLE: ImageStyle = {
-  height: 76,
-  width: 76,
 };
 
 interface apartados {
@@ -143,9 +137,3 @@ interface masDescargado {
      </>
    );
  }
-
-// export default function Screen(){
-//   return(
-//     <PagoScreen />
-//   )
-// }

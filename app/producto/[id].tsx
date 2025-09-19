@@ -8,7 +8,7 @@ import { preciocondescuento } from "@/utils/preciocondescuento";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, Calendar, Tag, Info, CheckCircle2 } from "lucide-react-native";
-import { bg_planes } from "@/utils/bg.clases.planes";
+import { bg_planesGradient } from "@/utils/bg.clases.planes";
 import { useCosultaApi } from "@/hooks/datosApi.hook";
 import { TipodeCompra } from "@/utils/url-compras";
 import { Payment } from "@/components/payments/payments-methods";
@@ -17,7 +17,7 @@ import { View, Image, ScrollView } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { AppLayout } from "@/components/navigation";
 import { Icon } from "@/components/ui/icon";
-const cardBackground = require("@/assets/card_background.svg");
+const cardBackground = require("@/assets/images/icon.png");
 
 export default function ProductoDetails() {
     const { id } = useLocalSearchParams();
@@ -37,9 +37,9 @@ export default function ProductoDetails() {
                     ...data,
                     requisitos_tecnicos: (JSON.parse(data.requisitos_tecnicos)),
                 });
-                const precioDescuento = preciocondescuento(Number(producto?.precio), Number(producto?.productos_ofertas?.[0].ofertas.descuento ?? 0))
-                setDescuentoAplicado(precioDescuento)
-                return
+                const precioDescuento = preciocondescuento(Number(producto?.precio), Number(producto?.productos_ofertas?.[0].ofertas.descuento ?? 0));
+                setDescuentoAplicado(precioDescuento);
+                return;
             }
             setError("Error al obtener el producto");
         };
@@ -64,11 +64,10 @@ export default function ProductoDetails() {
                                         <Image
                                             source={cardBackground}
                                             alt={producto.nombre}
-                                            className="rounded-lg aspect-square md:h-30"
+                                            className="rounded-lg aspect-square overflow-hidden"
                                             style={{
-                                                width: '100%',
-                                                height: '100%',
-                                                aspectRatio: 1,
+                                                height: 230,
+                                                aspectRatio: 1.5,
                                                 borderRadius: 8,
                                                 resizeMode: 'cover'
                                             }}
@@ -78,7 +77,8 @@ export default function ProductoDetails() {
                                         </View>
                                         {producto.plan &&
                                             <Badge
-                                                className={`absolute top-4 right-4 ${bg_planes(producto.plan.nombre)}`}
+                                                className={`absolute top-4 right-4 `}
+                                                style={{ backgroundColor: bg_planesGradient(producto.plan.nombre).Color1 }}
                                             >
                                                 <Text>
                                                     {producto.plan.nombre}
@@ -94,7 +94,7 @@ export default function ProductoDetails() {
                                             <View className="flex-row items-center gap-2 mb-4">
                                                 <Badge variant="outline" className="bg-orange-300/10 text-orange-300">{producto.categorias.nombre}</Badge>
                                                 {producto.plan &&
-                                                    <Badge variant="outline" className={bg_planes(producto.plan.nombre)}>
+                                                    <Badge variant="outline" style={{ backgroundColor: bg_planesGradient(producto.plan.nombre).Color1 }} >
                                                         <Text>
                                                             {producto.plan.nombre}
                                                         </Text>
@@ -108,6 +108,7 @@ export default function ProductoDetails() {
                                                 <Text className="text-3xl font-bold">${producto.precio_actual.precio}</Text>
                                                 {producto.versiones.length === 0 && producto.precio && producto.precio > 0 &&
                                                     <>
+
                                                         <Text className="text-xl text-muted-foreground line-through">
                                                             ${producto.precio}
                                                         </Text>
@@ -123,8 +124,6 @@ export default function ProductoDetails() {
                                             </View>
                                             {producto.versiones.length === 0 &&
                                                 <Payment id={producto.id} precio={descuentoAplicado > 0 ? descuentoAplicado.toString() : producto.precio.toString()} comprar={TipodeCompra.producto} classNamebtn="bg-amber-600 cursor-pointer" />
-
-                                                // <BtnComprarProducto id={producto.id} precio={descuentoAplicado > 0 ? descuentoAplicado.toString() : producto.precio.toString()} className="<bg-amber-600 px-4 py-2 rounded-sm> text-amber-50 w-full" />
                                             }
                                         </View>
 

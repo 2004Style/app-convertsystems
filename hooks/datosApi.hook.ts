@@ -31,7 +31,6 @@ export const MensajeError = (message: any): string => {
       finalMessage = JSON.stringify(innerMessage ?? message);
     }
   }
-  //console.log(finalMessage);
   return finalMessage;
 };
 
