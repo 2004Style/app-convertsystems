@@ -10,6 +10,7 @@ import { CardTienda } from '@/components/shop/card-store';
 import { AppLayout } from '@/components/navigation';
 import Pagination from './pagination';
 import SearchBar from './search';
+import { Loading } from '../loading/loading';
 
 interface ShopPageProps {
     typePage: "gratis" | "pagos" | "ofertas",
@@ -57,7 +58,7 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
     };
 
     const renderProductos = () => {
-        if (loading) return <Text>Cargando...</Text>;
+        if (loading) return <Loading></Loading>;
         if (error || productos.length === 0) return <Text>{error || "No se encontraron productos"}</Text>;
 
         return (

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Separator } from '@/components/ui/separator';
 import { Text } from '@/components/ui/text';
@@ -39,17 +38,16 @@ function MenuItem({ icon, title, onPress, variant = 'default' }: MenuItemProps) 
     return (
         <Pressable
             onPress={onPress}
-            className="w-full text-black"
+            className="w-full"
             style={{ opacity: 1 }}
-            // android_ripple={{ color: 'rgba(0,0,0,0.1)' }}
         >
             <View className={`flex-row items-center py-4 px-4 ${variant === 'destructive' ? '' : ''}`}>
                 <Icon
                     as={icon}
-                    className={`w-6 h-6 mr-4 ${variant === 'destructive' ? 'text-red-500' : 'text-black'}`}
+                    className={`w-6 h-6 mr-4 ${variant === 'destructive' ? 'text-red-500' : 'text-foreground'}`}
                 />
                 <Text
-                    className={`flex-1 text-black font-medium ${variant === 'destructive' ? 'text-red-500' : 'text-black'}`}
+                    className={`flex-1 font-medium ${variant === 'destructive' ? 'text-red-500' : 'text-foreground'}`}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
@@ -68,19 +66,6 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
     const menuWidth = Math.min(screenWidth * 0.85, 320); // Máximo 85% del ancho o 320px
-
-    // Debug info
-    // React.useEffect(() => {
-    //     console.log('SideMenu Debug:', {
-    //         visible,
-    //         screenWidth,
-    //         screenHeight,
-    //         menuWidth,
-    //         insets,
-    //         statusBarHeight: StatusBar.currentHeight,
-    //         platform: Platform.OS
-    //     });
-    // }, [visible]);
 
     React.useEffect(() => {
         if (visible) {
@@ -171,13 +156,12 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                         shadowOffset: { width: 2, height: 0 },
                         shadowOpacity: 0.25,
                         shadowRadius: 8,
-                        backgroundColor: 'white',
                     }}
                     className="bg-background"
                 >
                     {/* Header del menú */}
-                    <View className="flex-row items-center justify-between p-4 bg-primary border-b border-border">
-                        <Text className="text-xl font-bold text-primary-foreground">
+                    <View className="flex-row items-center justify-between border-b border-border">
+                        <Text className="text-xl p-4 font-bold text-foreground">
                             ConvertSystems
                         </Text>
                         <Pressable
@@ -185,7 +169,7 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                             className="p-2 rounded-full"
                             android_ripple={{ color: 'rgba(255,255,255,0.3)', borderless: true }}
                         >
-                            <Icon as={X} className="size-6 text-primary-foreground" />
+                            <Icon as={X} className="size-6 text-foreground" />
                         </Pressable>
                     </View>
 

@@ -50,7 +50,7 @@ export default function SVGGlareEffect({ clase, plan }: { clase?: string, plan: 
                             <Defs>
                                 <LinearGradient id="glareGradient" x1="0" y1="0" x2="1" y2="0">
                                     <Stop offset="0%" stopColor="transparent" stopOpacity="0" />
-                                    <Stop offset="40%" stopColor="rgba(255,255,255,0.25)" stopOpacity="0.25" />
+                                    <Stop offset="40%" stopColor="rgba(255,255,255,0.35)" stopOpacity="0.25" />
                                     <Stop offset="60%" stopColor="rgba(255,255,255,0.15)" stopOpacity="0.15" />
                                     <Stop offset="100%" stopColor="transparent" stopOpacity="0" />
                                 </LinearGradient>
