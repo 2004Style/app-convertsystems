@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CreditCard, GoalIcon as PaypalIcon, Check, ArrowRight } from "lucide-react-native";
@@ -8,6 +9,7 @@ import { IPagosBody } from '@/interfaces/interfaces';
 import { ComprarB_ClientNew } from '@/routes/user.routes';
 import { router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { Icon } from '../ui/icon';
 
 interface paymentsMethodsProps {
     id: string;
@@ -26,10 +28,14 @@ export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialo
     const handlePayment = async () => {
         setIsProcessing(true);
 
-        if (status !== "authenticated" || session === null) return;
+        if (status !== "authenticated" || session === null) {
+            setIsProcessing(false);
+            return;
+        }
 
         if (selectedPayment === null) {
             alert("Seleccione un método de pago");
+            setIsProcessing(false);
             return;
         }
 
@@ -61,46 +67,59 @@ export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialo
             const { data } = await response.json();
 
             if (response.ok) {
-                if (!data && typeof data !== "string") {
-                    return alert("La respuesta no contiene una URL válida:");
+                if (!data || typeof data !== "string") {
+                    alert("La respuesta no contiene una URL válida");
+                    setIsProcessing(false);
+                    return;
                 }
-                return router.replace(data);
+
+                // Cierra el diálogo
+                setShowPaymentDialog(false);
+
+                await WebBrowser.openBrowserAsync(data, {
+                    toolbarColor: '#6366f1',
+                    controlsColor: '#ffffff',
+                    showTitle: true,
+                    enableBarCollapsing: false,
+                });
+
+                setIsProcessing(false);
+                setSelectedPayment(null);
+                return;
             }
-            console.log("Error al realizar el pago")
-            // toast.error("Error al realizar el pago");
 
-        } catch {
-            console.log("Error al realizar el pago")
-            // toast.error("Error al realizar el pago");
+            console.log("Error al realizar el pago");
+            alert("Error al realizar el pago");
+            setIsProcessing(false);
+
+        } catch (error) {
+            console.log("Error al realizar el pago", error);
+            alert("Error al realizar el pago");
+            setIsProcessing(false);
         }
-
-        // despues de la compra, se debe actualizar el estado de la compra
-        setIsProcessing(false);
-        setSelectedPayment(null);
-        setShowPaymentDialog(false);
     };
 
     return (
         <>
             <Button
-                className={`w-full ${classNamebtn}`}
+                className={`w-full bg-orange-600 ${classNamebtn}`}
                 onPress={() => setShowPaymentDialog(true)}
             >
-                <Text className='text-white font-bold'>
+                <Text className='text-white font-extrabold'>
                     Realizar pago
                 </Text>
             </Button>
 
-            <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+            <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog} className='bg-background'>
                 <DialogContent className={`${classNameDialog}`}>
                     <DialogHeader>
                         <DialogTitle>Completa tu compra</DialogTitle>
                     </DialogHeader>
-                    <View className="space-y-6 py-4">
-                        <Text className="text-center font-extrabold text-2xl">Total: ${precio}</Text>
+                    <View className="flex-col gap-6 py-4">
+                        <Text className="text-center font-extrabold text-2xl text-foreground">Total: ${precio}</Text>
 
-                        <View className="space-y-4">
-                            <Text className="font-medium">Seleccione método de pago:</Text>
+                        <View className="flex-col gap-4">
+                            <Text className="font-medium text-foreground">Seleccione método de pago:</Text>
 
                             <Button
                                 variant={selectedPayment === `${ServicioDeCompra.paypal}` ? 'default' : 'outline'}
@@ -108,11 +127,11 @@ export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialo
                                 onPress={() => setSelectedPayment(`${ServicioDeCompra.paypal}`)}
                             >
                                 <View className="absolute left-4">
-                                    <PaypalIcon className="h-6 w-6" />
+                                    <Icon as={PaypalIcon} className="h-6 w-6 text-blue-600" />
                                 </View>
-                                <Text>PayPal</Text>
+                                <Text className='text-blue-600'>PayPal</Text>
                                 {selectedPayment === `${ServicioDeCompra.paypal}` && (
-                                    <Check className="h-5 w-5 absolute right-4" />
+                                    <Icon as={Check} className="h-5 w-5 absolute right-4 text-blue-600" />
                                 )}
                             </Button>
 
@@ -122,22 +141,22 @@ export function Payment({ id, precio, classNamebtn = "", comprar, classNameDialo
                                 onPress={() => setSelectedPayment(`${ServicioDeCompra.mercadopago}`)}
                             >
                                 <View className="absolute left-4">
-                                    <CreditCard className="h-6 w-6" />
+                                    <Icon as={CreditCard} className="h-6 w-6 text-blue-600" />
                                 </View>
-                                <Text>Mercado Pago</Text>
+                                <Text className='text-blue-600'>Mercado Pago</Text>
                                 {selectedPayment === `${ServicioDeCompra.mercadopago}` && (
-                                    <Check className="h-5 w-5 absolute right-4" />
+                                    <Icon as={Check} className="h-5 w-5 absolute right-4 text-blue-600" />
                                 )}
                             </Button>
                         </View>
 
                         <Button
-                            className="w-full"
+                            className="w-full bg-green-500"
                             disabled={!selectedPayment || isProcessing}
                             onPress={handlePayment}
                         >
                             {isProcessing ? (
-                                <Text>Processing...</Text>
+                                <Text>Procesando...</Text>
                             ) : (
                                 <>
                                     <Text>Completar Pago</Text>

@@ -68,7 +68,7 @@ export function CardTienda({ card }: CardVentasProps) {
                     alt="imagen de la empresa"
                 />
                 {!card.descuento && diasP < 2 &&
-                    <Text className="absolute font-bold top-2 right-2 text-xs px-4 py-2 rounded-md">NEW</Text>
+                    <Text className="absolute z-50 bg-green-400 text-black font-extrabold top-2 right-2 text-xs px-4 py-2 rounded-md" style={{ letterSpacing:2 }}>NEW</Text>
                 }
             </View>
 
@@ -97,7 +97,7 @@ export function CardTienda({ card }: CardVentasProps) {
                 <View className="flex flex-row items-center justify-between mb-4">
                     {card.version.map(ver => (
                         <View key={ver.valor} className="flex flex-row items-center gap-1">
-                            <Icon as={ver.icon}  />
+                            <Icon as={ver.icon} />
                             <Text className="text-sm text-black dark:text-white">{ver.valor}</Text>
                         </View>
                     ))}

@@ -34,7 +34,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         // 🟢 Crear nueva conexión (siempre se conecta, autenticado o no)
         const newSocket = io(urlBackend_Client, {
             path: "/socket",
-            query: { id: idUser },
+            // query: { id: idUser },
+            auth: { id: idUser },
             // Configuraciones adicionales para React Native
             transports: ['websocket', 'polling'],
             timeout: 20000,
@@ -43,11 +44,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
         setSocket(newSocket);
 
-        return () => {
-            // 🔴 Cerrar la conexión cuando el componente se desmonte o `user` cambie
-            newSocket.disconnect();
-        };
-    }, [session]); // Se ejecuta cuando `session` cambia (igual que en web)
+        // return () => {
+        //     // 🔴 Cerrar la conexión cuando el componente se desmonte o `user` cambie
+        //     // newSocket.disconnect();
+        // };
+    }, [session?.user.id]); // Se ejecuta cuando `session` cambia (igual que en web)
 
     return (
         <SocketContext.Provider value={socket}>

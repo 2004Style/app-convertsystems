@@ -5,11 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { router } from 'expo-router';
 import {
     Home,
-    User,
-    Settings,
-    Heart,
     ShoppingBag,
-    Bell,
     LogOut,
     X,
     Flame,
@@ -18,7 +14,7 @@ import {
     UserPlus,
     LogIn
 } from 'lucide-react-native';
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { Modal, Pressable, View, ScrollView, Animated, Dimensions, Platform, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -61,13 +57,13 @@ function MenuItem({ icon, title, onPress, variant = 'default' }: MenuItemProps) 
 export function SideMenu({ visible, onClose }: SideMenuProps) {
     const { session, logout } = useAuth();
     const insets = useSafeAreaInsets();
-    const slideAnim = React.useRef(new Animated.Value(-300)).current;
-    const opacityAnim = React.useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(-300)).current;
+    const opacityAnim = useRef(new Animated.Value(0)).current;
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
     const menuWidth = Math.min(screenWidth * 0.85, 320); // Máximo 85% del ancho o 320px
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (visible) {
             Animated.parallel([
                 Animated.timing(slideAnim, {
@@ -157,11 +153,11 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                         shadowOpacity: 0.25,
                         shadowRadius: 8,
                     }}
-                    className="bg-background"
+                    className="bg-sky-400 dark:bg-sky-900"
                 >
                     {/* Header del menú */}
-                    <View className="flex-row items-center justify-between border-b border-border">
-                        <Text className="text-xl p-4 font-bold text-foreground">
+                    <View className="absolute w-full flex-row items-center justify-between bg-sky-500 dark:bg-sky-950">
+                        <Text className="text-xl px-4 py-2 font-bold text-foreground">
                             ConvertSystems
                         </Text>
                         <Pressable
@@ -184,18 +180,21 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                     >
                         {/* Información del usuario si está logueado */}
                         {session?.user && (
-                            <View className="p-4 border-b border-border">
-                                <Text className="text-lg font-semibold text-foreground">
-                                    {session.user.nombre} {session.user.apellidos}
-                                </Text>
-                                <Text className="text-sm text-muted-foreground">
-                                    {session.user.correo}
-                                </Text>
-                            </View>
+                            <>
+                                <View className="px-4">
+                                    <Text className="text-lg font-semibold text-foreground">
+                                        {session.user.nombre} {session.user.apellidos}
+                                    </Text>
+                                    <Text className="text-sm text-muted-foreground">
+                                        {session.user.correo}
+                                    </Text>
+                                </View>
+                                <Separator className="my-4 mx-4" />
+                            </>
                         )}
 
                         {/* Sección Principal */}
-                        <View className="mt-4">
+                        <View>
                             <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
                                 Principal
                             </Text>
@@ -206,13 +205,13 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                                 onPress={() => navigateAndClose('/')}
                             />
 
-                            {session?.user && (
+                            {/* {session?.user && (
                                 <MenuItem
                                     icon={User}
                                     title="Mi Perfil"
                                     onPress={() => navigateAndClose('/profile')}
                                 />
-                            )}
+                            )} */}
                         </View>
 
                         <Separator className="my-4 mx-4" />
@@ -220,24 +219,24 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                         {/* Sección Productos */}
                         <View>
                             <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
-                                Productos
+                                tienda
                             </Text>
 
                             <MenuItem
-                                icon={Flame}
-                                title="Ofertas Especiales"
-                                onPress={() => navigateAndClose('/shop/ofertas')}
-                            />
-
-                            <MenuItem
                                 icon={CreditCard}
-                                title="Productos Premium"
+                                title="Pagos"
                                 onPress={() => navigateAndClose('/shop/pagos')}
                             />
 
                             <MenuItem
+                                icon={Flame}
+                                title="Ofertas"
+                                onPress={() => navigateAndClose('/shop/ofertas')}
+                            />
+
+                            <MenuItem
                                 icon={Gift}
-                                title="Productos Gratuitos"
+                                title="Gratis"
                                 onPress={() => navigateAndClose('/shop/gratis')}
                             />
                         </View>
@@ -255,40 +254,14 @@ export function SideMenu({ visible, onClose }: SideMenuProps) {
                                     <MenuItem
                                         icon={ShoppingBag}
                                         title="Mis Compras"
-                                        onPress={() => navigateAndClose('/purchases')}
-                                    />
-
-                                    <MenuItem
-                                        icon={Heart}
-                                        title="Favoritos"
-                                        onPress={() => navigateAndClose('/favorites')}
+                                        onPress={() => navigateAndClose('/client/compras')}
                                     />
                                 </View>
 
-                                <Separator className="my-4 mx-4" />
-
-                                {/* Sección Configuración */}
-                                <View>
-                                    <Text className="text-xs font-bold text-muted-foreground px-4 mb-2 uppercase tracking-wider">
-                                        Configuración
-                                    </Text>
-
-                                    <MenuItem
-                                        icon={Bell}
-                                        title="Notificaciones"
-                                        onPress={() => navigateAndClose('/notifications')}
-                                    />
-
-                                    <MenuItem
-                                        icon={Settings}
-                                        title="Configuración"
-                                        onPress={() => navigateAndClose('/settings')}
-                                    />
-                                </View>
                             </>
                         )}
 
-                        <Separator className="my-6 mx-4" />
+                        <Separator className="my-4 mx-4" />
 
                         {/* Sección de Autenticación */}
                         <View className="px-2">

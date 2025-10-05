@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View, Text, RefreshControl } from 'react-native';
 import { Productos } from '@/interfaces/interfaces';
 import { Stack } from 'expo-router';
 import { formatearFechaParaString } from '@/utils/formatearFecha';
@@ -27,19 +27,28 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
     const [totalPages, setTotalPages] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
 
-    useEffect(() => {
-        const fetchConsulta = async (page: number, search: string) => {
-            const { alert, data, message } = await get(`${typePage == "pagos" ? ProductosDePagaB_Public : typePage == 'ofertas' ? ProductosEnOfertasB_Public : ProductosGratisgaB_Public}?page=${page}&limit=${itemsPerPage}&search=${search}&order=desc`, { "Content-Type": "application/json", });
-            setError(null);
-            setLoading(false);
-            if (alert === "success") {
-                setProductos(data.records);
-                setTotalPages(data.totalPages);
-                return
-            }
-            if (message) setError(message);
-        };
+    const [refreshing, setRefreshing] = useState(false);
 
+    const fetchConsulta = async (page: number, search: string) => {
+        const { alert, data, message } = await get(`${typePage == "pagos" ? ProductosDePagaB_Public : typePage == 'ofertas' ? ProductosEnOfertasB_Public : ProductosGratisgaB_Public}?page=${page}&limit=${itemsPerPage}&search=${search}&order=desc`, { "Content-Type": "application/json", });
+        setError(null);
+        setLoading(false);
+        setRefreshing(false);
+        if (alert === "success") {
+            setProductos(data.records);
+            setTotalPages(data.totalPages);
+            return
+        }
+        if (message) setError(message);
+    };
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        setError(null);
+        await fetchConsulta(currentPage, search);
+    }
+
+    useEffect(() => {
         fetchConsulta(currentPage, search);
 
     }, [currentPage, search]);
@@ -138,7 +147,6 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
                                                 },
                                             ]
                                         }
-
                                 }
                             />
                         );
@@ -153,7 +161,20 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
         <>
             <Stack.Screen options={{ headerShown: false }} />
             <AppLayout title="ConvertSystems">
-                <ScrollView className="flex-1" contentContainerStyle={{ padding: 8 }}>
+                <ScrollView
+                    className="flex-1"
+                    contentContainerStyle={{ padding: 8 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#ff6600', '#2f25ff', '#00f326']}
+                            tintColor={'#ff6600'}
+                            title='Cargando...'
+                            titleColor='#ff6600'
+                        />
+                    }
+                >
                     <View
                         className="flex flex-col gap-2"
                     >

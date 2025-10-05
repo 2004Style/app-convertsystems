@@ -1,6 +1,5 @@
 import { AppLayout } from '@/components/navigation/app-layout';
 import { Stack } from 'expo-router';
-import { useColorScheme } from 'nativewind';
 import { ScrollView, View } from 'react-native';
 
 import { ApartadosCard, PerfilCard } from '@/components/Cards-Home/cards';
@@ -10,11 +9,6 @@ import { useEffect, useState } from 'react';
 import { DataCarruselWelcome, NativeCarousel } from '@/components/Cards-Home/native-carousel';
 import { formatearFechaParaString } from '@/utils/formatearFecha';
 import { Clock, Database, DollarSign, Download, GitBranch } from 'lucide-react-native';
-
-const LOGO = {
-  light: require('@/assets/images/react-native-reusables-light.png'),
-  dark: require('@/assets/images/react-native-reusables-dark.png'),
-};
 
 interface apartados {
   tienda: string;
@@ -42,7 +36,6 @@ interface masDescargado {
 }
 
  export default function Screen() {
-   const { colorScheme } = useColorScheme();
    const { session } = useAuth();
    const socket = useSocket();
 

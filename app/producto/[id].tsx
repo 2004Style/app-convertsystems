@@ -13,10 +13,11 @@ import { useCosultaApi } from "@/hooks/datosApi.hook";
 import { TipodeCompra } from "@/utils/url-compras";
 import { Payment } from "@/components/payments/payments-methods";
 import { Text } from "@/components/ui/text";
-import { View, Image, ScrollView } from "react-native";
+import { View, Image, ScrollView, RefreshControl } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { AppLayout } from "@/components/navigation";
 import { Icon } from "@/components/ui/icon";
+import { set } from "zod";
 const cardBackground = require("@/assets/images/icon.png");
 
 export default function ProductoDetails() {
@@ -26,24 +27,32 @@ export default function ProductoDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [descuentoAplicado, setDescuentoAplicado] = useState<number>(0);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchConsulta = async () => {
+        const { alert, data } = await get(`${TiendaB_Client}/${id}`);
+        setLoading(false);
+        setRefreshing(false);
+        if (alert === "success") {
+            setProducto({
+                ...data,
+                requisitos_tecnicos: (JSON.parse(data.requisitos_tecnicos)),
+            });
+            const precioDescuento = preciocondescuento(Number(producto?.precio), Number(producto?.productos_ofertas?.[0].ofertas.descuento ?? 0));
+            setDescuentoAplicado(precioDescuento);
+            return;
+        }
+        setError("Error al obtener el producto");
+    };
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        setError(null);
+        await fetchConsulta();
+    };
 
     useEffect(() => {
         if (sessionStatus !== "authenticated") return;
-        const fetchConsulta = async () => {
-            const { alert, data } = await get(`${TiendaB_Client}/${id}`);
-            setLoading(false);
-            if (alert === "success") {
-                setProducto({
-                    ...data,
-                    requisitos_tecnicos: (JSON.parse(data.requisitos_tecnicos)),
-                });
-                const precioDescuento = preciocondescuento(Number(producto?.precio), Number(producto?.productos_ofertas?.[0].ofertas.descuento ?? 0));
-                setDescuentoAplicado(precioDescuento);
-                return;
-            }
-            setError("Error al obtener el producto");
-        };
-
         fetchConsulta();
     }, [id, sessionStatus]);
 
@@ -55,7 +64,19 @@ export default function ProductoDetails() {
             <Stack.Screen options={{ headerShown: false }} />
             {producto && (
                 <AppLayout title="ConvertSystems">
-                    <ScrollView className="relative bg-background p-0 md:p-4">
+                    <ScrollView
+                        className="relative bg-background p-0 md:p-4"
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={['#f97316']} // Color naranja para Android
+                                tintColor="#f97316" // Color naranja para iOS
+                                title="Actualizando..." // Texto para iOS
+                                titleColor="#64748b" // Color del texto para iOS
+                            />
+                        }
+                    >
                         <View className="w-full flex flex-col gap-4 p-4">
                             <Card className="overflow-hidden">
                                 <View className="flex flex-col md:flex-row gap-4 p-4">
@@ -123,7 +144,7 @@ export default function ProductoDetails() {
                                                 }
                                             </View>
                                             {producto.versiones.length === 0 &&
-                                                <Payment id={producto.id} precio={descuentoAplicado > 0 ? descuentoAplicado.toString() : producto.precio.toString()} comprar={TipodeCompra.producto} classNamebtn="bg-amber-600 cursor-pointer" />
+                                                <Payment id={producto.id} precio={descuentoAplicado > 0 ? descuentoAplicado.toString() : producto.precio.toString()} comprar={TipodeCompra.producto} />
                                             }
                                         </View>
 
