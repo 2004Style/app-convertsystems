@@ -101,7 +101,7 @@ interface masDescargado {
    return (
      <>
        <Stack.Screen options={{ headerShown: false }} />
-       <AppLayout title="ConvertSystems">
+       <AppLayout title="ConvertSystems" showBackButton={true}>
          <ScrollView className="flex-1" contentContainerStyle={{ padding: 8 }}>
            <View className="items-center gap-6 w-full">
              {session?.user !== null && session?.user !== undefined &&

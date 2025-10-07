@@ -160,7 +160,7 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
     return (
         <>
             <Stack.Screen options={{ headerShown: false }} />
-            <AppLayout title="ConvertSystems">
+            <AppLayout title="ConvertSystems" showBackButton={true}>
                 <ScrollView
                     className="flex-1"
                     contentContainerStyle={{ padding: 8 }}

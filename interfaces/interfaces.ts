@@ -68,7 +68,7 @@ export interface Productos {
   productos_ofertas: productos_ofertas[];
 }
 
-export type ProductoConRequisitosArray = Omit<Productos, "requisitos_tecnicos"> & {
+export type ProductoConRequisitosArray = Omit<Productos, 'requisitos_tecnicos'> & {
   requisitos_tecnicos: string[];
 };
 
@@ -152,12 +152,15 @@ export interface Ventas {
   nombre_producto: string;
   precio_original: number;
   descuento: number;
+  precio: string;
   monto_pagado: number;
   impuesto: number;
   ganancia: number;
   currency_code: string;
   fecha_registro: Date;
   productos: Productos;
+  precio_final: string;
+  hora_registro: Date;
 }
 
 export interface planSuscripcion {
@@ -184,11 +187,10 @@ export interface suscripcion {
   usuarios: Usuarios;
 }
 
-
 // compras
 export interface IPagosBody {
-  service: "paypal" | "mercadopago";
-  compra: "producto" | "suscripcion";
+  service: 'paypal' | 'mercadopago';
+  compra: 'producto' | 'suscripcion';
   monto: number;
   currency: string;
   //datos del producto o suscripción

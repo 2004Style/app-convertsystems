@@ -63,7 +63,7 @@ export default function ProductoDetails() {
         <>
             <Stack.Screen options={{ headerShown: false }} />
             {producto && (
-                <AppLayout title="ConvertSystems">
+                <AppLayout title="ConvertSystems" showBackButton={true}>
                     <ScrollView
                         className="relative bg-background p-0 md:p-4"
                         refreshControl={
