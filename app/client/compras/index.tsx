@@ -5,11 +5,10 @@ import { Icon } from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
-import { useAuth } from "@/contexts/AuthContext";
 import { useCosultaApi } from "@/hooks/datosApi.hook";
 import { TiendaHistorialUserCompradosB_Client } from "@/routes/user.routes";
 import { router, Stack } from "expo-router";
-import { Eye, ShoppingBag, Package, HardDrive } from "lucide-react-native";
+import { Eye, Package, HardDrive } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { RefreshControl, ScrollView, View, Image } from "react-native";
 
@@ -34,14 +33,12 @@ export default function HistorialComprasPage() {
         setLoading(false);
         setRefreshing(false);
         console.log(data);
+        console.log(alert);
         if (alert === "success") {
-            if(!data.records) {
-                setProductos([]);
-                return;
-            }
             setProductos(data.records);
             return
         }
+        setProductos([]);
         setError("Error al obtener los productos " + error);
 
     };
@@ -106,7 +103,7 @@ export default function HistorialComprasPage() {
 
                             <CardContent >
                                 {/* Detalles del producto */}
-                                <View className="bg-muted/30 dark:bg-muted/50 rounded-lg flex-row justify-between">
+                                <View className="rounded-lg flex-row justify-between">
                                     <View className="flex-row items-center gap-2">
                                         <Icon as={Package} size={14} className="text-muted-foreground" />
                                         <Text className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
