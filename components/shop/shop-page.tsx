@@ -26,11 +26,12 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
     const [search, setSearch] = useState<string>("");
+    const [searchCategoria, setSearchCategoria] = useState<string>("")
 
     const [refreshing, setRefreshing] = useState(false);
 
-    const fetchConsulta = async (page: number, search: string) => {
-        const { alert, data, message } = await get(`${typePage == "pagos" ? ProductosDePagaB_Public : typePage == 'ofertas' ? ProductosEnOfertasB_Public : ProductosGratisgaB_Public}?page=${page}&limit=${itemsPerPage}&search=${search}&order=desc`, { "Content-Type": "application/json", });
+    const fetchConsulta = async (page: number, search: string, searchCategoria: string) => {
+        const { alert, data, message } = await get(`${typePage == "pagos" ? ProductosDePagaB_Public : typePage == 'ofertas' ? ProductosEnOfertasB_Public : ProductosGratisgaB_Public}?page=${page}&limit=${itemsPerPage}&search=${search}&searchCategoria=${searchCategoria}&order=desc`, { "Content-Type": "application/json", });
         setError(null);
         setLoading(false);
         setRefreshing(false);
@@ -45,13 +46,13 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
     const onRefresh = async () => {
         setRefreshing(true);
         setError(null);
-        await fetchConsulta(currentPage, search);
+        await fetchConsulta(currentPage, search, searchCategoria);
     }
 
     useEffect(() => {
-        fetchConsulta(currentPage, search);
+        fetchConsulta(currentPage, search, searchCategoria);
 
-    }, [currentPage, search]);
+    }, [currentPage, search, searchCategoria]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage > 0 && newPage <= totalPages) {
@@ -62,6 +63,12 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
 
     const handleSearchChange = (text: string) => {
         setSearch(text);
+        setCurrentPage(1);
+        setLoading(false);
+    };
+
+    const handleSearchCategoriaChange = (text: string) => {
+        setSearchCategoria(text);
         setCurrentPage(1);
         setLoading(false);
     };
@@ -84,7 +91,7 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
                                         id: producto.id,
                                         nombre: producto.nombre,
                                         categoria: producto.categorias.nombre,
-                                        precio: producto.precio.toString(),
+                                        precio: String(producto.precio),
                                         descipcion: producto.descripcion,
                                         version: [
                                             {
@@ -178,7 +185,7 @@ export default function ShopPage({ typePage, itemsPerPage = 10 }: ShopPageProps)
                     <View
                         className="flex flex-col gap-2"
                     >
-                        <SearchBar search={search} handleSearchChange={handleSearchChange} />
+                        <SearchBar search={search} handleSearchChange={handleSearchChange} seachCategorySelect={searchCategoria} handleSearchCategory={handleSearchCategoriaChange} />
                         {renderProductos()}
                         {/* <Footer /> */}
                     </View>

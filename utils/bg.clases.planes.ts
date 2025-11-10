@@ -27,12 +27,12 @@ export function bg_planesGradient(plan: string): ColorBgRadial {
             : '#000080',
     Color3:
       plan == class_planes.premium
-        ? '#66001A' // Burdeos oscuro
+        ? '#66001A'
         : plan == class_planes.vip
-          ? '#B20000' // Rojo profundo
+          ? '#B20000'
           : plan == class_planes.basic
-            ? '#5FAF00' // Verde oscuro
-            : '#000066', // Azul marino más profundo
+            ? '#5FAF00'
+            : '#000066',
     foreground:
       plan == class_planes.premium
         ? '#ffffff'

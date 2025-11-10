@@ -24,14 +24,32 @@ interface NativeCarouselProps {
 
 const GradientBorderCard = ({ children }: { children: React.ReactNode }) => {
     return (
-        <LinearGradient
-            colors={['#6ff6f1', '#a8ffff', '#00ff99']}
-            style={styles.gradientBorder}
-        >
-            <View style={styles.innerCard} className='bg-white/90 dark:bg-gray-900/90'>
-                {children}
-            </View>
-        </LinearGradient>
+        <View style={{
+            borderRadius: 16,
+            padding: 2,
+            width: '100%',
+            shadowColor: '#000',
+            shadowOffset: {
+                width: 0,
+                height: 4,
+            },
+            shadowOpacity: 0.2,
+            shadowRadius: 6,
+            elevation: 8,
+        }}>
+            <LinearGradient
+                colors={['#6ff6f1', '#a8ffff', '#00ff99']}
+                style={{
+                    borderRadius: 16,
+                    padding: 2,
+                    width: '100%',
+                }}
+            >
+                <View style={styles.innerCard} className='bg-white/90 dark:bg-gray-900/90'>
+                    {children}
+                </View>
+            </LinearGradient>
+        </View>
     );
 };
 
@@ -277,19 +295,6 @@ export function NativeCarousel({ data, autoPlayDelay = 3000 }: NativeCarouselPro
     },
     cardTouchable: {
         width: '100%',
-    },
-    gradientBorder: {
-        borderRadius: 16,
-        padding: 2,
-        width: '100%',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 6,
-        elevation: 8,
     },
     innerCard: {
         borderRadius: 14,

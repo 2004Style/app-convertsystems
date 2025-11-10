@@ -66,6 +66,7 @@ export interface Productos {
   versiones: Versiones[]; // Cambiar a array
   registro_productos: registro_productos[]; // Cambiar a array
   productos_ofertas: productos_ofertas[];
+  resenias: IResenias[];
 }
 
 export type ProductoConRequisitosArray = Omit<Productos, 'requisitos_tecnicos'> & {
@@ -196,4 +197,15 @@ export interface IPagosBody {
   //datos del producto o suscripción
   productId: string; // ID del producto o plan de suscripción
   userId: string; // ID del usuario que realiza la compra
+}
+
+export interface IResenias {
+  id: string;
+  usuario_id: string;
+  producto_id: string;
+  calificacion: number;
+  comentario: string;
+  fecha_registro?: Date;
+  usuarios?: Usuarios;
+  productos?: Productos;
 }

@@ -52,6 +52,8 @@ export const PerfilB_Client = `${UsuariosB_Client}/perfil`;
 export const VersionesB_Client = `${urlBackend_Client}/versiones`;
 export const PlanesB_Client = `${urlBackend_Client}/planes`;
 
+export const ReseniasB_Client = `${urlBackend_Client}/resenias`;
+
 //rutas de compras
 export const ComprarProductoB_Client = `${ProductosB_Client}/comprar?service=`; //post paypal or mercadopago
 export const PagarProductoB_Client = `${ProductosB_Client}/pagar`; //get
