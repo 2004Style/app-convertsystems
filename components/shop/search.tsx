@@ -1,6 +1,6 @@
 import { Search } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
-import { Alert, View } from "react-native";
+import { useEffect, useState } from "react";
+import { View } from "react-native";
 import {
     Select,
     SelectContent,
@@ -10,7 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import type { TriggerRef } from '@rn-primitives/select';
 import { Icon } from "../ui/icon";
 import { Input } from "../ui/input";
 import { useCosultaApi } from "@/hooks/datosApi.hook";
@@ -71,7 +70,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ search, handleSearchChange, seach
                 <Input
                     value={search}
                     onChangeText={handleSearchChange}
-                    placeholder="Buscar productos..."
+                    placeholder="Buscar..."
                     className="flex-1 bg-transparent border border-black  placeholder:text-black dark:border-white dark:placeholder:text-gray-50"
                 />
             </View>
